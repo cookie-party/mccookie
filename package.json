@@ -1,0 +1,19 @@
+{
+  "name": "mccookie",
+  "version": "1.0.0",
+  "description": "Hello world.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kumi48/mccookie.git"
+  },
+  "author": "kumi48",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kumi48/mccookie/issues"
+  },
+  "homepage": "https://github.com/kumi48/mccookie#readme"
+}
