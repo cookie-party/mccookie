@@ -4,6 +4,7 @@
   "description": "Hello world.",
   "main": "index.js",
   "scripts": {
+    "start": "node ./bin/www",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +16,14 @@
   "bugs": {
     "url": "https://github.com/kumi48/mccookie/issues"
   },
-  "homepage": "https://github.com/kumi48/mccookie#readme"
+  "homepage": "https://github.com/kumi48/mccookie#readme",
+  "dependencies": {
+    "body-parser": "~1.15.2",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.2.0",
+    "express": "~4.14.0",
+    "jade": "~1.11.0",
+    "morgan": "~1.7.0",
+    "serve-favicon": "~2.3.0"
+  }
 }
