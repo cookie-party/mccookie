@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import nj from './lib/numjs';
+//import nj from './lib/numjs';
 
 export default class Transformed extends Component{
   constructor(props, state) {
@@ -9,7 +9,7 @@ export default class Transformed extends Component{
   }
   render() {
     const transformed = document.getElementById('transformed');
-    this.props.transformed && nj.images.save(this.props.transformed, transformed);
+//    this.props.transformed && nj.images.save(this.props.transformed, transformed);
     return (
       <div>
         <canvas id="transformed" width="28" height="28"></canvas>

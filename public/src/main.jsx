@@ -14,7 +14,7 @@ import Percentage from './percentage';
 import Recognize from './recognize';
 import Transformed from './transformed';
 import Result from './result';
-import NN from './neuralnet';
+//import NN from './neuralnet';
 
 class Main extends Component{
   constructor(props, state){
@@ -30,7 +30,7 @@ class Main extends Component{
       transformed: null
     };
 
-    const nn = new NN();
+//    const nn = new NN();
 
     this.state.emitter.on('ctx', (context)=>{
       //console.log('context',context);
@@ -41,8 +41,8 @@ class Main extends Component{
       });
     }).on('onRecognize', ()=>{
       //console.log('onRecognize');
-      const ret = nn.recognize(this.state.context);
-      this.setState({probs: ret.probs, transformed: ret.img, result: ret.result});
+//      const ret = nn.recognize(this.state.context);
+//      this.setState({probs: ret.probs, transformed: ret.img, result: ret.result});
     }).on('onClear', ()=>{
       //console.log('onClear');
       this.state.context.fillStyle = 'white';
@@ -52,8 +52,8 @@ class Main extends Component{
       this.state.context.fillStyle = 'black';
       this.state.context.fillRect(event.x, event.y, 12, 12);
       //auto recog?
-      const ret = nn.recognize(this.state.context);
-      this.setState({probs: ret.probs, transformed: ret.img, result: ret.result});
+//      const ret = nn.recognize(this.state.context);
+//      this.setState({probs: ret.probs, transformed: ret.img, result: ret.result});
     });
   }
 
