@@ -1,3 +1,5 @@
+//kumiko
+
 import React, {Component} from 'react';
 import EventEmitter2 from 'EventEmitter2';
 
