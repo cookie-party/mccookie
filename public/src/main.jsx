@@ -2,6 +2,9 @@ import React, {Component} from 'react';
 
 import EventEmitter2 from 'EventEmitter2';
 
+import injectTapEventPlugin from 'react-tap-event-plugin';
+injectTapEventPlugin();
+
 import IconButton from 'material-ui/IconButton';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
