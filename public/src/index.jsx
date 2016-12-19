@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './main';
+import Login from './login';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 const Index = () => (
   <MuiThemeProvider>
-    <App />
+    <Login />
   </MuiThemeProvider>
 );
 
