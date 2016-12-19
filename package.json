@@ -17,19 +17,26 @@
     "url": "https://github.com/kumi48/mccookie/issues"
   },
   "homepage": "https://github.com/kumi48/mccookie#readme",
+  "babel": {
+    "presets": [
+      "es2015",
+      "react"
+    ]
+  },
   "dependencies": {
     "body-parser": "~1.13.2",
     "cookie-parser": "~1.3.5",
     "debug": "~2.2.0",
+    "eventemitter2": "^2.1.3",
     "express": "~4.13.1",
+    "firebase": "^3.6.4",
     "jade": "~1.11.0",
+    "material-ui": "^0.15.2",
     "morgan": "~1.6.1",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
     "react-tap-event-plugin": "^1.0.0",
-    "serve-favicon": "~2.3.0",
-    "material-ui": "^0.15.2",
-    "eventemitter2": "^2.1.3"
+    "serve-favicon": "~2.3.0"
   },
   "devDependencies": {
     "babel": "^6.5.2",
