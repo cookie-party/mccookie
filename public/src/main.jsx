@@ -11,6 +11,7 @@ import Paper from 'material-ui/Paper';
 
 import CookieBox from './cookiebox';
 import CookieCommunity from './cookieCommunity';
+import MyList from './mylist';
 
 class Main extends Component{
   constructor(props, state){
@@ -69,7 +70,7 @@ class Main extends Component{
           <tbody>
             <tr>
               <td style={tdStyle2}>
-                MyList
+                <MyList {...this.state}/>
               </td>
               <td style={tdStyle2}>
                 Discovery
