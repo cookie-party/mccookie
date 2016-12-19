@@ -1,9 +1,7 @@
-//kumiko
-
 import React, {Component} from 'react';
+
 import EventEmitter2 from 'EventEmitter2';
 
-//import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
@@ -11,12 +9,8 @@ import FlatButton from 'material-ui/FlatButton';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import Paper from 'material-ui/Paper';
 
-import Dcanvas from './dcanvas';
-import Percentage from './percentage';
-import Recognize from './recognize';
-import Transformed from './transformed';
-import Result from './result';
-//import NN from './neuralnet';
+import CookieBox from './cookiebox';
+import CookieCommunity from './cookieCommunity';
 
 class Main extends Component{
   constructor(props, state){
@@ -24,9 +18,18 @@ class Main extends Component{
     const emitter = new EventEmitter2();
 
     this.state = {
-      emitter
+      emitter,
+      contents: 0
     };
 
+  }
+
+  handleCookieBox() {
+    this.setState({contents: 1});
+  }
+
+  handleCookieCommunity() {
+    this.setState({contents: 2});
   }
 
   render() {
@@ -60,16 +63,40 @@ class Main extends Component{
       border : '1px solid black',
       borderColor: 'orange'
     };
+
+    let page = (
+          <table style={tableStyle2}>
+          <tbody>
+            <tr>
+              <td style={tdStyle2}>
+                MyList
+              </td>
+              <td style={tdStyle2}>
+                Discovery
+              </td>
+            </tr>
+          </tbody>
+          </table>
+    );
+    
+    if(this.state.contents === 1){
+      page = <CookieBox {...this.state}/>;
+    }
+    else if(this.state.contents === 2){
+      page = <CookieCommunity {...this.state}/>;
+    }
+
     return (
       <div>
         <div>
           <table style={tableStyle1}>
+          <tbody>
             <tr>
               <td style = {tdStyle1}>
-                Cookie Box
+                <FlatButton onClick={this.handleCookieBox.bind(this)}>Cookie Box</FlatButton>
               </td>
               <td style = {tdStyle1}>
-                Cookie Community
+                <FlatButton onClick={this.handleCookieCommunity.bind(this)}>Cookie Community</FlatButton>
               </td>
               <td style = {tdStyle1}>
                 Search Other Sweets
@@ -84,17 +111,11 @@ class Main extends Component{
                 <FlatButton label="Logout" />
               </td>
             </tr>
+          </tbody>
           </table>
-          <table style={tableStyle2}>
-            <tr>
-              <td style={tdStyle2}>
-                MyList
-              </td>
-              <td style={tdStyle2}>
-                Discovery
-              </td>
-            </tr>
-          </table>
+
+          {page}
+
         </div>
       </div>
     );
