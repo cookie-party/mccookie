@@ -1,7 +1,10 @@
 import React, {Component} from 'react';
+
 import EventEmitter2 from 'EventEmitter2';
 
-//import AppBar from 'material-ui/AppBar';
+import injectTapEventPlugin from 'react-tap-event-plugin';
+injectTapEventPlugin();
+
 import IconButton from 'material-ui/IconButton';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
@@ -9,12 +12,9 @@ import FlatButton from 'material-ui/FlatButton';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import Paper from 'material-ui/Paper';
 
-import Dcanvas from './dcanvas';
-import Percentage from './percentage';
-import Recognize from './recognize';
-import Transformed from './transformed';
-import Result from './result';
-//import NN from './neuralnet';
+import CookieBox from './cookiebox';
+import CookieCommunity from './cookieCommunity';
+import MyList from './mylist';
 
 class Main extends Component{
   constructor(props, state){
@@ -23,79 +23,103 @@ class Main extends Component{
 
     this.state = {
       emitter,
-      context: null,
-      imageData: null,
-      probs: {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0},
-      result: null,
-      transformed: null
+      contents: 0
     };
 
-//    const nn = new NN();
+  }
 
-    this.state.emitter.on('ctx', (context)=>{
-      //console.log('context',context);
-      const imageData = context.getImageData(0, 244, 1, 1).data;
-      this.setState({
-        context: context,
-        imageData: imageData
-      });
-    }).on('onRecognize', ()=>{
-      //console.log('onRecognize');
-//      const ret = nn.recognize(this.state.context);
-//      this.setState({probs: ret.probs, transformed: ret.img, result: ret.result});
-    }).on('onClear', ()=>{
-      //console.log('onClear');
-      this.state.context.fillStyle = 'white';
-      this.state.context.fillRect(0, 0, 224, 224);
-    }).on('onMouseMove', (event)=>{
-      //console.log('onMouseMove');
-      this.state.context.fillStyle = 'black';
-      this.state.context.fillRect(event.x, event.y, 12, 12);
-      //auto recog?
-//      const ret = nn.recognize(this.state.context);
-//      this.setState({probs: ret.probs, transformed: ret.img, result: ret.result});
-    });
+  handleCookieBox() {
+    this.setState({contents: 1});
+  }
+
+  handleCookieCommunity() {
+    this.setState({contents: 2});
   }
 
   render() {
-    const style = {
-      margin: '0 auto'
+    const tableStyle1 = {
+      border : '1px solid black',
+      borderCollapse: 'collapse',
+      borderColor: 'red',
+      height: '75px',
+      margin: '10 auto',
+      tableLayout: 'fixed',
+      width: '80%'
     };
-    const paperstyle = {
-      height: 224,
-      width: 224,
-      margin: 20,
-      textAlign: 'center',
-      display: 'inline-block',
+    const tableStyle2 = {
+      border : '1px solid black',
+      borderCollapse: 'collapse',
+      borderColor: 'red',
+      height: '400px',
+      margin: '10 auto',
+      tableLayout: 'fixed',
+      width: '80%'
     };
+    const titleStyle = {
+      color: 'red',
+      fontSize: '30px'
+    };
+    const tdStyle1 = {
+      border : '1px solid black',
+      borderColor: 'orange'
+    };
+    const tdStyle2 = {
+      border : '1px solid black',
+      borderColor: 'orange'
+    };
+
+    let page = (
+          <table style={tableStyle2}>
+          <tbody>
+            <tr>
+              <td style={tdStyle2}>
+                <MyList {...this.state}/>
+              </td>
+              <td style={tdStyle2}>
+                Discovery
+              </td>
+            </tr>
+          </tbody>
+          </table>
+    );
+    
+    if(this.state.contents === 1){
+      page = <CookieBox {...this.state}/>;
+    }
+    else if(this.state.contents === 2){
+      page = <CookieCommunity {...this.state}/>;
+    }
+
     return (
       <div>
         <div>
-          <table style={style}>
+          <table style={tableStyle1}>
+          <tbody>
             <tr>
-              <td>
-                <Paper style={paperstyle} zDepth={2} >
-                  <Dcanvas  {...this.state} />
-                </Paper>
+              <td style = {tdStyle1}>
+                <FlatButton onClick={this.handleCookieBox.bind(this)}>Cookie Box</FlatButton>
               </td>
-              <td>
-                <Percentage  {...this.state} />
+              <td style = {tdStyle1}>
+                <FlatButton onClick={this.handleCookieCommunity.bind(this)}>Cookie Community</FlatButton>
+              </td>
+              <td style = {tdStyle1}>
+                Search Other Sweets
+              </td>
+              <td style = {tdStyle1}>
+                <FlatButton label="Notification" />
+              </td>
+              <td style = {tdStyle1}>
+                <FlatButton label="Edit Profile" />
+              </td>
+              <td style = {tdStyle1}>
+                <FlatButton label="Logout" />
               </td>
             </tr>
-            <tr>
-              <td>
-                <Transformed {...this.state}/>
-              </td>
-              <td>
-                <Recognize {...this.state}/>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <Result {...this.state}/>
-              </td>
-            </tr>
+          </tbody>
           </table>
+
+          {page}
+
         </div>
       </div>
     );
