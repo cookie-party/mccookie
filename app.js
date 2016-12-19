@@ -20,10 +20,24 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+/*
+//TODO sessionルーティング reactレベルでやるか, expressでやるか?
+app.use(express.session({
+  secret: 'secret',
+  store: {},
+  cookie: {
+    httpOnly: false,
+    maxAge: new Date(Date.now() + 60 * 60 * 1000)
+  }
+}));
+*/
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
-app.use('/users', users);
+app.use('/api/', index);
+
+//TODO ゆくゆくAPIが増えたら
+//app.use('/api/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
