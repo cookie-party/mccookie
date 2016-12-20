@@ -16,10 +16,22 @@ import CookieBox from './cookiebox';
 import CookieCommunity from './cookieCommunity';
 import MyList from './mylist';
 
+import {query} from './agent';
+
 class Main extends Component{
   constructor(props, state){
     super(props, state);
     const emitter = new EventEmitter2();
+
+    /*
+    //superagent例
+    query('user', 1)
+    .then((res)=>{
+      console.log('query ',res);
+    }).catch((err)=>{
+      console.log('query ',err);
+    });
+    */
 
     this.state = {
       emitter,
