@@ -16,10 +16,23 @@ import CookieBox from './cookiebox';
 import CookieCommunity from './cookieCommunity';
 import MyList from './mylist';
 
+import {query} from './agent';
+
 class Main extends Component{
   constructor(props, state){
     super(props, state);
     const emitter = new EventEmitter2();
+    this.userId = this.props.userId;
+
+    /*
+    //superagent例
+    query('user', 1)
+    .then((res)=>{
+      console.log('query ',res);
+    }).catch((err)=>{
+      console.log('query ',err);
+    });
+    */
 
     this.state = {
       emitter,
@@ -34,6 +47,10 @@ class Main extends Component{
 
   handleCookieCommunity() {
     this.setState({contents: 2});
+  }
+
+  handleLogout() {
+    this.props.onLogout(this.userId);
   }
 
   render() {
@@ -112,7 +129,7 @@ class Main extends Component{
                 <FlatButton label="Edit Profile" />
               </td>
               <td style = {tdStyle1}>
-                <FlatButton label="Logout" />
+                <FlatButton label="Logout" onClick={this.handleLogout.bind(this)} />
               </td>
             </tr>
           </tbody>

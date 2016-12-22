@@ -1,3 +1,4 @@
+/*global __dirname*/
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -8,11 +9,16 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 
+//const CookieParser = require('cookie-parser');
+//const React = require('react');
+//const ReactCookie = require('react-cookie');
+
 var app = express();
 
+// view jadeは使わない
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+//app.set('views', path.join(__dirname, 'views'));
+//app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -32,29 +38,33 @@ app.use(express.session({
   }
 }));
 */
+
+//webはpublic直叩き
 app.use(express.static(path.join(__dirname, 'public')));
 
+//APIは /api/v?/~
 app.use('/api/', index);
 
-//TODO ゆくゆくAPIが増えたら
-//app.use('/api/users', users);
+/*
+//cookie ssrで使うかも用
+app.use(CookieParser());
+app.use(function(req, res){
+  ReactCookie.plugToRequest(req, res);
+  res.send('' + React.renderToString());
+});
+*/
 
-// catch 404 and forward to error handler
+//error case
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
-  next(err);
+  const ssr = require('./public/dist/error');
+  ssr(res, err.message, err);
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+/*
+//TODO ゆくゆくAPIが増えたらわけるかも
+//app.use('/api/users', users);
+*/
 
 module.exports = app;

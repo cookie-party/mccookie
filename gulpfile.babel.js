@@ -11,9 +11,17 @@ gulp.task('webpack', ()=> {
   .pipe(gulp.dest(''));
 });
 
+gulp.task('ssr', ()=> {
+  return gulp.src('./public/src/ssr/*.jsx')
+  .pipe(babel({
+    presets: ['es2015','react']
+  }))
+  .pipe(gulp.dest('./public/dist/'));
+});
+
 gulp.task('watch', ()=>{
   gulp.watch(['./public/src/**/*.js','./public/src/**/*.jsx'], ['webpack']);
 });
 
-gulp.task('default', ['webpack', 'watch']);
+gulp.task('default', ['webpack', 'ssr', 'watch']);
 

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
+import Firebase from 'firebase';
 
 export default class Auth extends Component{
   constructor(props, state){
@@ -10,6 +11,7 @@ export default class Auth extends Component{
       email: '',
       password: ''
     };
+
   }
 
   onChangeEmail(e) {
@@ -24,7 +26,7 @@ export default class Auth extends Component{
     //console.log('authenticate '+this.state.email+' '+this.state.password);
     if(this.state.email === 'test') {
       //this.props.emitter.emit('authed', 'testuser');
-      this.props.authenticated('test');
+      this.props.onLogin('test');
     } else {
       const firebase = this.props.fb;
       // 既存ユーザーのログイン機能
@@ -33,7 +35,7 @@ export default class Auth extends Component{
         //console.log('logined '+JSON.stringify(ret));
         const userId = firebase.auth().currentUser.uid;
         //console.log('uid = '+userId);
-        this.props.authenticated(userId);
+        this.props.onLogin(userId);
       })
       .catch(function(error) {
         alert('loginできません（' + error.message + '）');
@@ -51,6 +53,29 @@ export default class Auth extends Component{
     });
   }
 
+  twitterAuth() {
+    //console.log('twitterAuth');
+    const provider = new Firebase.auth.TwitterAuthProvider();
+    const firebase = this.props.fb;
+    provider.setCustomParameters({
+      'lang': 'ja'
+    });
+    firebase.auth().signInWithPopup(provider)
+    .then((result)=> {
+      const token = result.credential.accessToken;
+      const secret = result.credential.secret;
+      const user = result.user;
+      console.log('logined '+JSON.stringify(result));
+      this.props.onLogin(result.uid);
+    }).catch((error)=> {
+//      const errorCode = error.code;
+//      const errorMessage = error.message;
+//      const email = error.email;
+//      const credential = error.credential;
+      console.log('login failed '+JSON.stringify(error));
+    });
+  }
+
   logout() {
     //console.log('logout');
     const firebase = this.props.fb;
@@ -63,9 +88,10 @@ export default class Auth extends Component{
     };
     return (
       <div id="authArea">
+        <h2> Mccookie </h2>
         <table style={tableStyle}>
         <tr>
-          <td style={{colspan: 2}}>
+          <td colSpan={2}>
             <TextField
               hintText="メールアドレス"
               onChange={this.onChangeEmail.bind(this)}
@@ -84,7 +110,12 @@ export default class Auth extends Component{
             <RaisedButton label="ログイン" primary={true} onClick={this.authenticate.bind(this)} />
           </td>
           <td>
-            <RaisedButton label="新規登録" primary={true} onClick={this.register.bind(this)} />
+            <RaisedButton label="Twitter認証" primary={true} onClick={this.twitterAuth.bind(this)} />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <RaisedButton label="新規登録" primary={false} onClick={this.register.bind(this)} />
           </td>
         </tr>
         </table>
