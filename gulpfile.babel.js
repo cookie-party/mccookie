@@ -4,6 +4,8 @@ import eslint from 'gulp-eslint';
 import plumber from 'gulp-plumber';
 import webpack from 'gulp-webpack';
 import webpackConfig from './webpack.config.js';
+import env from 'gulp-env';
+import nodemon from 'gulp-nodemon';
 
 gulp.task('webpack', ()=> {
   return gulp.src('./public/src/*.jsx')
@@ -19,9 +21,23 @@ gulp.task('ssr', ()=> {
   .pipe(gulp.dest('./public/dist/'));
 });
 
-gulp.task('watch', ()=>{
-  gulp.watch(['./public/src/**/*.js','./public/src/**/*.jsx'], ['webpack']);
+gulp.task('run', ()=> {
+  env({
+    file: '.env.json'
+  });
+  nodemon({
+    script: './bin/www',
+    ext: 'js',
+    stdout: true,
+    env: {
+      NODE_ENV: 'development'
+    }
+  });
 });
 
-gulp.task('default', ['webpack', 'ssr', 'watch']);
+gulp.task('watch', ()=>{
+  gulp.watch(['./public/src/**/*.js','./public/src/**/*.jsx'], ['webpack', 'ssr']);
+});
+
+gulp.task('default', ['webpack', 'ssr', 'run', 'watch']);
 
