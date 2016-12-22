@@ -6,10 +6,11 @@ const columns = ['user','wordbook','words','category','userScore','userBookScore
 //mysql
 pool.getConnection((err, conn)=>{
   if(err){
-    console.log(err);
-    return;
+    //console.log(err);
+    //return;
   }
 
+  /*
   //テスト接続
   const sql = 'SELECT name FROM user WHERE id=?';
   conn.query(sql, 1, (err, results)=>{
@@ -19,6 +20,7 @@ pool.getConnection((err, conn)=>{
     }
     console.log(results);
   });
+  */
 
   //データ取得
   const getDataById = (conn, target, id)=>{
@@ -46,7 +48,7 @@ pool.getConnection((err, conn)=>{
     return new Promise((resolve, reject)=>{
       console.log('insertData:'+target,data);
       conn.query('INSERT INTO '+target+' SET ?', data, function(err, result) {
-        if (err) throw err;
+        if (err){ reject(err); }
         else {
           console.log(result.insertId);
           resolve(result.insertId);
@@ -82,7 +84,7 @@ pool.getConnection((err, conn)=>{
             updateData.push(updateData[0]);
             updateData.splice(0,1); //idを最後に回す
             conn.query('UPDATE '+target+' SET '+targets+' WHERE id = ?', updateData, function(err, result) {
-              if (err) throw err;
+              if (err){ reject(err);}
               else {
                 resolve(result);
               }
