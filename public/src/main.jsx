@@ -22,6 +22,7 @@ class Main extends Component{
   constructor(props, state){
     super(props, state);
     const emitter = new EventEmitter2();
+    this.userId = this.props.userId;
 
     /*
     //superagent例
@@ -46,6 +47,10 @@ class Main extends Component{
 
   handleCookieCommunity() {
     this.setState({contents: 2});
+  }
+
+  handleLogout() {
+    this.props.onLogout(this.userId);
   }
 
   render() {
@@ -124,7 +129,7 @@ class Main extends Component{
                 <FlatButton label="Edit Profile" />
               </td>
               <td style = {tdStyle1}>
-                <FlatButton label="Logout" />
+                <FlatButton label="Logout" onClick={this.handleLogout.bind(this)} />
               </td>
             </tr>
           </tbody>

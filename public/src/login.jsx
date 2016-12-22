@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 
 import firebase from 'firebase';
+import cookie from 'react-cookie';
 
 import config from './config/config';
 import Auth from './auth';
@@ -14,28 +15,39 @@ export default class LoginPage extends Component{
 
     this.state = {
       fb: fbapp,
-      authed: false,
-      userId: '',
+      userId: null,
       config: config,
-      authenticated: this.authenticated.bind(this)
+      onLogin: this.onLogin.bind(this),
+      onLogout: this.onLogout.bind(this)
     };
   }
 
-  authenticated (uid) {
-    //console.log('authenticated', uid);
-    this.setState({authed: true, userId: uid});
+  componentWillMount() {
+    this.setState({ userId: cookie.load('userId') });
   }
 
-  logout() {
-    //TODO logout
+  onLogin (userId) {
+    //console.log('onLogin', uid);
+    this.setState({userId: userId});
+    cookie.save('userId', userId, { path: '/' });
+  }
+
+  onLogout(uid) {
+    //console.log('onLogout');
+    this.setState({userId: null});
+    cookie.remove('userId', { path: '/' });
   }
 
   render() {
-    const Next = this.state.authed? <Main {...this.state}/>: <Auth {...this.state}/>;
+    let main = <Main {...this.state}/>;
+
+    if (!this.state.userId) {
+      main =  <Auth {...this.state} />;
+    }
 
     return (
       <div>
-        {Next}
+        {main}
       </div>
     );
   }
