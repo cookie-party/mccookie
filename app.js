@@ -25,7 +25,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //web mainのssr
 app.use('/', function(req, res, next) {
-  console.log('req.url:'+req.url );
   if(req.url === '/') {
     const server = require('./public/dist/server');
     const config = process.env;
