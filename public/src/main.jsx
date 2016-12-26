@@ -15,6 +15,7 @@ import Paper from 'material-ui/Paper';
 import CookieBox from './cookiebox';
 import CookieCommunity from './cookieCommunity';
 import MyList from './mylist';
+import Discovery from './discovery';
 
 import {query} from './agent';
 
@@ -36,7 +37,8 @@ class Main extends Component{
 
     this.state = {
       emitter,
-      contents: 0
+      contents: 0,
+      userId: this.props.userId
     };
 
   }
@@ -81,12 +83,10 @@ class Main extends Component{
       fontSize: '30px'
     };
     const tdStyle1 = {
-      border : '1px solid black',
-      borderColor: 'orange'
+      border : '1px solid orange',
     };
     const tdStyle2 = {
-      border : '1px solid black',
-      borderColor: 'orange'
+      border : '1px solid orange',
     };
 
     let page = <div/>;
@@ -99,8 +99,10 @@ class Main extends Component{
                 <td style={tdStyle2}>
                   <MyList {...this.state}/>
                 </td>
+              </tr>
+              <tr>
                 <td style={tdStyle2}>
-                  Discovery
+                  <Discovery {...this.state}/>
                 </td>
               </tr>
             </tbody>

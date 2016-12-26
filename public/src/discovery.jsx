@@ -11,9 +11,12 @@ const styles = {
     justifyContent: 'space-around',
   },
   gridList: {
-    width: 500,
-    height: 450,
-    overflowY: 'auto',
+    display: 'flex',
+    flexWrap: 'nowrap',
+//    width: 500,
+//    height: 450,
+    overflowX: 'auto',
+//    overflowY: 'auto',
   },
 };
 
@@ -55,16 +58,16 @@ const images = tilesData.map((tile) => (
         </GridTile>
       ));
 
-const MyList = () => (
+const Discovery = () => (
   <div style={styles.root}>
     <GridList
       cellHeight={180}
       style={styles.gridList}
     >
-      <Subheader>MyList</Subheader>
+      <Subheader>Discovery</Subheader>
       {images}
     </GridList>
   </div>
 );
 
-export default MyList;
+export default Discovery;
