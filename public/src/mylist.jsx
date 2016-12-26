@@ -5,6 +5,7 @@ import Subheader from 'material-ui/Subheader';
 import StarBorder from 'material-ui/svg-icons/toggle/star-border';
 import {Pie} from 'react-chartjs-2';
 
+import {getBookList} from './dbUtil';
 import {query} from './agent';
 
 class MyList extends Component {
@@ -39,36 +40,16 @@ class MyList extends Component {
   //1~ => 単語帳
   //-1 => mylist新規追加
   onClick(id) {
-    console.log('onClick',id);
-  }
-
-  getBookList() {
-    return new Promise((resolve, reject)=>{
-      query('user', this.props.userId)
-      .then((res)=>{
-        if(res.myBookIdlist){
-          const getBooksQuery = res.myBookIdlist.split(',').map((id)=>{
-            return query('wordbook', id);
-          });
-          Promise.all(getBooksQuery)
-          .then((results)=>{
-            resolve(results);
-          }).catch((err)=>{
-            console.log('query ',err);
-            reject(err);
-          });
-        }else{
-          resolve([]);
-        }
-      }).catch((err)=>{
-        console.log('query ',err);
-        reject(err);
-      });
-    });
+    if(id>0){
+      this.props.emitter.emit('cookieStart', id);
+    }
+    else if(id === -1){
+      this.props.emitter.emit('cookieRegister');
+    }
   }
 
   componentDidMount(){
-    this.getBookList().then((results)=>{
+    getBookList(this.props.userId).then((results)=>{
       //console.log('getBookList',results);
       if(results.length>0){
         this.setState({
