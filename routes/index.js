@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const pool = require('./dbConn');
-const columns = ['user','wordbook','words','category','userScore','userBookScore'];
+const tables = ['user','wordbook','words','category','userScore','userBookScore'];
 
 //mysql
 pool.getConnection((err, conn)=>{
@@ -34,6 +34,27 @@ pool.getConnection((err, conn)=>{
           }
           else {
             resolve(results[0]);
+          }
+        });
+      }
+      else{
+        resolve({});
+      }
+    });
+  };
+
+  //データ取得 by target column id
+  const getDataBySpedifiedColumn = (conn, target, column, key)=>{
+    return new Promise((resolve, reject)=>{
+      console.log('getDataBySpedifiedColumn: '+target+',column['+column+'] key='+key);
+      const sql = 'SELECT * FROM '+target+' WHERE '+column+'=?';
+      if(conn && key){
+        conn.query(sql, key, (err, results)=>{
+          if(err) {
+            reject(err);
+          }
+          else {
+            resolve(results);
           }
         });
       }
@@ -116,9 +137,25 @@ pool.getConnection((err, conn)=>{
   });
 
   /* GET DATA */
-  columns.forEach((column)=>{
-    router.get('/'+column, function(req, res, next) {
-      getDataById(conn, column, req.query.id)
+  tables.forEach((table)=>{
+    router.get('/'+table, function(req, res, next) {
+      getDataById(conn, table, req.query.id)
+      .then((data)=>{
+        console.log('data',data);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(data));
+      }).catch((err)=>{
+        console.log('err',err);
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(err));
+      });
+    });
+  });
+
+  /* GET DATA BY TARGETID */
+  tables.forEach((table)=>{
+    router.get('/'+table+'ByColumn', function(req, res, next) {
+      getDataBySpedifiedColumn(conn, table, req.query.column, req.query.id)
       .then((data)=>{
         console.log('data',data);
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -132,9 +169,9 @@ pool.getConnection((err, conn)=>{
   });
 
   /* INSERT DATA */
-  columns.forEach((column)=>{
-    router.post('/'+column, function(req, res, next) {
-      insertData(conn, column, req.body)
+  tables.forEach((table)=>{
+    router.post('/'+table, function(req, res, next) {
+      insertData(conn, table, req.body)
       .then((id)=>{
         console.log('insert',id);
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -148,9 +185,9 @@ pool.getConnection((err, conn)=>{
   });
 
   /* UPDATE DATA */
-  columns.forEach((column)=>{
-    router.put('/'+column, function(req, res, next) {
-      updateData(conn, column, req.body)
+  tables.forEach((table)=>{
+    router.put('/'+table, function(req, res, next) {
+      updateData(conn, table, req.body)
       .then((result)=>{
         console.log('update',result);
         res.writeHead(200, { 'Content-Type': 'application/json' });
