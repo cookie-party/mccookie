@@ -1,5 +1,8 @@
 import React, {Component} from 'react';
 
+//react-routerでroutingしようかな
+import {Link} from 'react-router'; 
+
 import EventEmitter2 from 'EventEmitter2';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -114,7 +117,9 @@ class Main extends Component{
           <tbody>
             <tr>
               <td style = {tdStyle1}>
-                <FlatButton onClick={this.handleCookieBox.bind(this)}>Cookie Box</FlatButton>
+                <Link to='/test'>
+                  <FlatButton onClick={this.handleCookieBox.bind(this)}>Cookie Box</FlatButton>
+                </Link>
               </td>
               <td style = {tdStyle1}>
                 <FlatButton onClick={this.handleCookieCommunity.bind(this)}>Cookie Community</FlatButton>

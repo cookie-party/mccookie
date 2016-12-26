@@ -2,7 +2,7 @@
   "name": "mccookie",
   "version": "1.0.0",
   "description": "Hello world.",
-  "main": "index.js",
+  "main": "lib/app.js",
   "scripts": {
     "start": "node ./bin/www",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -37,9 +37,11 @@
     "react": "^15.4.1",
     "react-cookie": "^1.0.4",
     "react-dom": "^15.4.1",
+    "react-router": "^3.0.0",
     "react-tap-event-plugin": "^2.0.0",
     "serve-favicon": "~2.3.0",
-    "superagent": "^3.3.1"
+    "superagent": "^3.3.1",
+    "webpack-stream": "^3.2.0"
   },
   "devDependencies": {
     "babel": "^6.5.2",

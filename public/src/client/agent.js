@@ -1,5 +1,5 @@
 import request from 'superagent';
-import config from './config/config';
+import config from '../config/config';
 
 export const query = (target, id)=> {
   return new Promise((resolve, reject)=>{

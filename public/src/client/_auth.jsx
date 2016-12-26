@@ -83,6 +83,7 @@ export default class Auth extends Component{
   } 
 
   render() {
+    console.log('auth');
     const tableStyle = {
       margin: '0 auto'
     };

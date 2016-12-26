@@ -1,9 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Login from './login';
-//import Main from './main'; //ssrでauthしてもいいかも?
-
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+
+import Login from './login';
 
 const Index = () => (
   <MuiThemeProvider>
@@ -13,5 +12,5 @@ const Index = () => (
 
 ReactDOM.render(
   <Index />,
-  document.getElementById('root')
+  document.getElementById('login')
 );

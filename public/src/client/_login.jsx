@@ -5,7 +5,7 @@ import cookie from 'react-cookie';
 
 //import config from './config/config';
 import Auth from './auth';
-import Main from './main';
+//import Main from './main';
 const env = window ? window.APP_PROPS : {};
 
 export default class LoginPage extends Component{
@@ -49,7 +49,7 @@ export default class LoginPage extends Component{
   }
 
   render() {
-    let main = <Main {...this.state}/>;
+    let main /*= <Main {...this.state}/>*/;
 
     if (!this.state.userId) {
       main =  <Auth {...this.state} />;
