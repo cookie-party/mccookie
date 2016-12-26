@@ -41,6 +41,10 @@ class Main extends Component{
 
   }
 
+  handleTop() {
+    this.setState({contents: 0});
+  }
+
   handleCookieBox() {
     this.setState({contents: 1});
   }
@@ -85,22 +89,25 @@ class Main extends Component{
       borderColor: 'orange'
     };
 
-    let page = (
-          <table style={tableStyle2}>
-          <tbody>
-            <tr>
-              <td style={tdStyle2}>
-                <MyList {...this.state}/>
-              </td>
-              <td style={tdStyle2}>
-                Discovery
-              </td>
-            </tr>
-          </tbody>
-          </table>
-    );
+    let page = <div/>;
     
-    if(this.state.contents === 1){
+    if(this.state.contents === 0){
+      page = (
+            <table style={tableStyle2}>
+            <tbody>
+              <tr>
+                <td style={tdStyle2}>
+                  <MyList {...this.state}/>
+                </td>
+                <td style={tdStyle2}>
+                  Discovery
+                </td>
+              </tr>
+            </tbody>
+            </table>
+      );
+    }
+    else if(this.state.contents === 1){
       page = <CookieBox {...this.state}/>;
     }
     else if(this.state.contents === 2){
@@ -113,6 +120,9 @@ class Main extends Component{
           <table style={tableStyle1}>
           <tbody>
             <tr>
+              <td style = {tdStyle1}>
+                <img src='../img/logo.png' style={{cursor: 'pointer'}} width='100%' onTouchTap={this.handleTop.bind(this)}/>
+              </td>
               <td style = {tdStyle1}>
                 <FlatButton onClick={this.handleCookieBox.bind(this)}>Cookie Box</FlatButton>
               </td>
