@@ -22,11 +22,12 @@ export default class Auth extends Component{
     this.setState({password: e.target.value});
   }
 
+  //TODO DBのユーザidを返すようにする
   authenticate() {
     //console.log('authenticate '+this.state.email+' '+this.state.password);
     if(this.state.email === 'test') {
       //this.props.emitter.emit('authed', 'testuser');
-      this.props.onLogin('test');
+      this.props.onLogin(1);
     } else {
       const firebase = this.props.fb;
       // 既存ユーザーのログイン機能
