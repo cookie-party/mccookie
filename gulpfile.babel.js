@@ -2,14 +2,14 @@ import gulp from 'gulp';
 import babel from 'gulp-babel';
 import eslint from 'gulp-eslint';
 import plumber from 'gulp-plumber';
-import webpack from 'gulp-webpack';
+import webpack from 'webpack-stream';
 import webpackConfig from './webpack.config.js';
 import env from 'gulp-env';
 import nodemon from 'gulp-nodemon';
 
 gulp.task('webpack', ()=> {
   return gulp.src('./public/src/*.jsx')
-  .pipe(webpack(webpackConfig))
+  .pipe(webpack({config:webpackConfig}))
   .pipe(gulp.dest(''));
 });
 

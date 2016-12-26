@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 
 const renderFullPage = function(config) {
-  console.log('dir',__dirname);
+  //console.log('dir',__dirname);
   return `
     <!DOCTYPE html>
       <html>

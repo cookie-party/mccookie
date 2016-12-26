@@ -15,7 +15,10 @@ import Paper from 'material-ui/Paper';
 import CookieBox from './cookiebox';
 import CookieCommunity from './cookieCommunity';
 import MyList from './mylist';
+import Discovery from './discovery';
+import Words from './words';
 
+import {getUserData, getWordList} from './dbUtil';
 import {query} from './agent';
 
 class Main extends Component{
@@ -24,21 +27,72 @@ class Main extends Component{
     const emitter = new EventEmitter2();
     this.userId = this.props.userId;
 
-    /*
-    //superagent例
-    query('user', 1)
-    .then((res)=>{
-      console.log('query ',res);
-    }).catch((err)=>{
-      console.log('query ',err);
-    });
-    */
-
     this.state = {
       emitter,
-      contents: 0
+      contents: 0,
+      wordList: [],
+      userId: this.props.userId,
+      userInfo: {},
+      userScore: {},
+      userBookScore: {}
     };
 
+    this.state.emitter.on('cookieStart',(id)=>{
+      //単語帳実践モード
+      getWordList(id)
+      .then((results)=>{
+        let wordList = results.map((data)=>{
+          return {
+            key: data.keyText,
+            value: data.valueText,
+            ate: false //TODO ate情報とってくる
+          };
+        });
+
+        //テストよう
+        if(wordList.length <= 0){
+          wordList = [
+            {key: 'key', value: 'value', ate: true},
+            {key: 'key2', value: 'value2', ate: false},
+          ];
+        }
+
+        this.setState({ 
+          contents: 3,
+          wordList: wordList
+        });
+      }).catch((err)=>{
+        console.log('getWordList',err);
+        this.setState({ 
+          contents: 3, //テスト用
+        });
+      });
+    }).on('cookieRegister',()=>{
+      //TODO 単語帳登録モード
+    }).on('cookieAte', (id, ate)=>{
+      const list = this.state.wordList;
+      list[id].ate = ate;
+      this.setState({wordList: list});
+    });
+
+  }
+
+  componentDidMount() {
+    //ユーザ情報取得
+    getUserData(this.userId)
+    .then((results)=>{
+      this.setState({
+        userInfo: results.userInfo,
+        userScore: results.userScore,
+        userBookScore: results.userBookScore,
+      });
+    }).catch((err)=>{
+      console.log('getUserData',err);
+    });
+  }
+
+  handleTop() {
+    this.setState({contents: 0});
   }
 
   handleCookieBox() {
@@ -54,81 +108,98 @@ class Main extends Component{
   }
 
   render() {
-    const tableStyle1 = {
-      border : '1px solid black',
-      borderCollapse: 'collapse',
-      borderColor: 'red',
-      height: '75px',
-      margin: '10 auto',
-      tableLayout: 'fixed',
-      width: '80%'
-    };
-    const tableStyle2 = {
-      border : '1px solid black',
-      borderCollapse: 'collapse',
-      borderColor: 'red',
-      height: '400px',
-      margin: '10 auto',
-      tableLayout: 'fixed',
-      width: '80%'
-    };
-    const titleStyle = {
-      color: 'red',
-      fontSize: '30px'
-    };
-    const tdStyle1 = {
-      border : '1px solid black',
-      borderColor: 'orange'
-    };
-    const tdStyle2 = {
-      border : '1px solid black',
-      borderColor: 'orange'
+    const styles = {
+      center: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+      },
+      tableStyle1: {
+        border : '1px solid black',
+        borderCollapse: 'collapse',
+        borderColor: 'red',
+        height: '75px',
+        margin: '10 auto',
+        tableLayout: 'fixed',
+        width: '80%'
+      },
+      tableStyle2: {
+        border : '1px solid black',
+        borderCollapse: 'collapse',
+        borderColor: 'red',
+        height: '400px',
+        margin: '10 auto',
+        tableLayout: 'fixed',
+        width: '80%'
+      },
+      titleStyle: {
+        color: 'red',
+        fontSize: '30px'
+      },
+      tdStyle1: {
+        border : '1px solid orange',
+      },
+      tdStyle2: {
+        border : '1px solid orange',
+      },
     };
 
-    let page = (
-          <table style={tableStyle2}>
-          <tbody>
-            <tr>
-              <td style={tdStyle2}>
-                <MyList {...this.state}/>
-              </td>
-              <td style={tdStyle2}>
-                Discovery
-              </td>
-            </tr>
-          </tbody>
-          </table>
-    );
+    let page = <div/>;
     
-    if(this.state.contents === 1){
+    if(this.state.contents === 0){
+      page = (
+            <table style={styles.tableStyle2}>
+            <tbody>
+              <tr>
+                <td style={styles.tdStyle2}>
+                  <MyList {...this.state}/>
+                </td>
+              </tr>
+              <tr>
+                <td style={styles.tdStyle2}>
+                  <Discovery {...this.state}/>
+                </td>
+              </tr>
+            </tbody>
+            </table>
+      );
+    }
+    else if(this.state.contents === 1){
       page = <CookieBox {...this.state}/>;
     }
     else if(this.state.contents === 2){
       page = <CookieCommunity {...this.state}/>;
     }
+    else if(this.state.contents === 3){
+      page = <Words {...this.state}/>;
+    }
 
     return (
       <div>
-        <div>
-          <table style={tableStyle1}>
+        <div style={styles.center}>
+          <table style={styles.tableStyle1}>
           <tbody>
             <tr>
-              <td style = {tdStyle1}>
+              <td style = {styles.tdStyle1}>
+                <img src='../img/logo.png' style={{cursor: 'pointer'}} width='100%' onTouchTap={this.handleTop.bind(this)}/>
+              </td>
+              <td style = {styles.tdStyle1}>
                 <FlatButton onClick={this.handleCookieBox.bind(this)}>Cookie Box</FlatButton>
               </td>
-              <td style = {tdStyle1}>
+              <td style = {styles.tdStyle1}>
                 <FlatButton onClick={this.handleCookieCommunity.bind(this)}>Cookie Community</FlatButton>
               </td>
-              <td style = {tdStyle1}>
+              <td style = {styles.tdStyle1}>
                 Search Other Sweets
               </td>
-              <td style = {tdStyle1}>
+              <td style = {styles.tdStyle1}>
                 <FlatButton label="Notification" />
               </td>
-              <td style = {tdStyle1}>
+              <td style = {styles.tdStyle1}>
                 <FlatButton label="Edit Profile" />
               </td>
-              <td style = {tdStyle1}>
+              <td style = {styles.tdStyle1}>
                 <FlatButton label="Logout" onClick={this.handleLogout.bind(this)} />
               </td>
             </tr>
