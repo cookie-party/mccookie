@@ -27,7 +27,7 @@ pool.getConnection((err, conn)=>{
     return new Promise((resolve, reject)=>{
       console.log('getDataById: '+target+',id='+id);
       const sql = 'SELECT * FROM '+target+' WHERE id=?';
-      if(id){
+      if(conn && id){
         conn.query(sql, id, (err, results)=>{
           if(err) {
             reject(err);
@@ -47,13 +47,17 @@ pool.getConnection((err, conn)=>{
   const insertData = (conn, target, data)=>{
     return new Promise((resolve, reject)=>{
       console.log('insertData:'+target,data);
-      conn.query('INSERT INTO '+target+' SET ?', data, function(err, result) {
-        if (err){ reject(err); }
-        else {
-          console.log(result.insertId);
-          resolve(result.insertId);
-        }
-      });
+      if(conn && data){
+        conn.query('INSERT INTO '+target+' SET ?', data, function(err, result) {
+          if (err){ reject(err); }
+          else {
+            console.log(result.insertId);
+            resolve(result.insertId);
+          }
+        });
+      }else{
+        resolve(-1);
+      }
     });
   };
 
@@ -63,7 +67,7 @@ pool.getConnection((err, conn)=>{
       const id = data.id;
       console.log('updateData:'+target+'['+id+']',data);
       const sql = 'SELECT * FROM '+target+' WHERE id=?';
-      if(id){
+      if(conn && id){
         conn.query(sql, id, (err, results)=>{
           if(err) {
             reject(err);
