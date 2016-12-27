@@ -63,8 +63,15 @@ class Main extends Component{
         });
       }).catch((err)=>{
         console.log('getWordList',err);
+        //テストよう
+        let wordList = [
+          {key: 'key', value: 'value', ate: true},
+          {key: 'key2', value: 'value2', ate: false},
+        ];
+
         this.setState({ 
           contents: 3, //テスト用
+          wordList: wordList
         });
       });
     }).on('cookieRegister',()=>{
