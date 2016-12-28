@@ -129,16 +129,16 @@ class Main extends Component{
         height: '75px',
         margin: '10 auto',
         tableLayout: 'fixed',
-        width: '80%'
+        width: '90%'
       },
       tableStyle2: {
         border : '1px solid black',
         borderCollapse: 'collapse',
         borderColor: 'red',
-        height: '400px',
+        height: '450px',
         margin: '10 auto',
         tableLayout: 'fixed',
-        width: '80%'
+        width: '90%'
       },
       titleStyle: {
         color: 'red',

@@ -3,6 +3,7 @@ import {GridList, GridTile} from 'material-ui/GridList';
 import IconButton from 'material-ui/IconButton';
 import Subheader from 'material-ui/Subheader';
 import StarBorder from 'material-ui/svg-icons/toggle/star-border';
+import AddIcon from 'material-ui/svg-icons/action/note-add';
 import {Pie} from 'react-chartjs-2';
 
 import {getBookList} from './dbUtil';
@@ -67,6 +68,32 @@ class MyList extends Component {
   }
 
   render(){
+    const styles = {
+      root: {
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'space-around',
+      },
+      gridList: {
+        display: 'flex',
+        flexWrap: 'wrap',
+//        flexDirection: 'row',
+        justifyContent: 'space-around',
+//        overflowY: 'auto',
+//        alignItems: 'stretch'
+      },
+      tile: {
+        cursor:'pointer',
+        margin: '0 auto',
+        width: 250,
+        height: 200,
+      }, 
+      mediumIcon: {
+        width: 100,
+        height: 100,
+      }, 
+    };
+
     const _calcData = (atePercentage) => {
       return {
         labels: [
@@ -86,49 +113,39 @@ class MyList extends Component {
         }]
       };
     };
-
+  
     const images = this.state.tilesData.map((tile) => (
-            <GridTile
-              style={{cursor:'pointer'}}
-              key={tile.key}
-              title={tile.title}
-              subtitle={<span>by <b>{tile.author}</b></span>}
-              actionIcon={<IconButton><StarBorder color="white" /></IconButton>}
-              onTouchTap={this.onClick.bind(this, tile.key)}
-            >
-              <Pie data={_calcData(tile.atePercentage)} />
-            </GridTile>
-          ));
+      <GridTile
+        key={tile.key}
+        title={tile.title}
+        subtitle={<span>by <b>{tile.author}</b></span>}
+        actionIcon={<IconButton><StarBorder color="white" /></IconButton>}
+        onTouchTap={this.onClick.bind(this, tile.key)}
+      >
+        <div style={styles.tile}>
+          <Pie data={_calcData(tile.atePercentage)} />
+        </div>
+      </GridTile>
+    ));
 
     images.push((
       <GridTile
-        style={{cursor:'pointer'}}
+        style={styles.tile}
         key={-1}
         title={'新規追加'}
         actionIcon={<IconButton><StarBorder color="white" /></IconButton>}
         onTouchTap={this.onClick.bind(this, -1)}
       >
-        新規追加っぽい画像
+        <div style={styles.tile}>
+          <AddIcon style={styles.mediumIcon}/>
+        </div>
       </GridTile>
     ));
-
-    const styles = {
-      root: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'space-around',
-      },
-      gridList: {
-        display: 'flex',
-        flexWrap: 'nowrap',
-        overflowY: 'auto',
-      },
-    };
 
     return (
       <div style={styles.root}>
         <GridList
-          cellHeight={180}
+          cellHeight={200}
           style={styles.gridList}
         >
           <Subheader>MyList</Subheader>
