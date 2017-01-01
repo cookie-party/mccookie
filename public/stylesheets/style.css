@@ -1,0 +1,27 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif; }
+
+a {
+  color: #00B7FF; }
+
+.animation-enter {
+  opacity: .01;
+  transform: translateY(50%) scale(0.95, 0.95);
+  transition: all 1s ease-out; }
+  .animation-enter.animation-enter-active {
+    opacity: 1;
+    transform: translateY(0) scale(1, 1); }
+
+.animation-leave {
+  opacity: 1;
+  transform: translateY(0) scale(1, 1);
+  transition: all .2s ease-out; }
+  .animation-leave.animation-leave-active {
+    opacity: .01;
+    transform: translateY(5%) scale(0.98, 0.98); }
+
+.rotateString-appear {
+  opacity: 0; }
+  .rotateString-appear.rotateString-appear-active {
+    opacity: 0; }
