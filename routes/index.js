@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const pool = require('./dbConn');
-const tables = ['user','wordbook','words','category','userScore','userBookScore'];
+const tables = ['user','tags','wordbook','words','category','userScore','userBookScore'];
 
 //mysql
 pool.getConnection((err, conn)=>{
