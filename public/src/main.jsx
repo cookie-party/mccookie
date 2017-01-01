@@ -12,8 +12,7 @@ import FlatButton from 'material-ui/FlatButton';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import Paper from 'material-ui/Paper';
 
-import {getUserData, getWordList} from './dbUtil';
-import {query} from './agent';
+import {getUserData} from './util/dbUtil';
 
 import Register from './register';
 import Timeline from './timeline';
