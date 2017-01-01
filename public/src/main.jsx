@@ -12,14 +12,12 @@ import FlatButton from 'material-ui/FlatButton';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import Paper from 'material-ui/Paper';
 
-import CookieBox from './cookiebox';
-import CookieCommunity from './cookieCommunity';
-import MyList from './mylist';
-import Discovery from './discovery';
-import Words from './words';
-
 import {getUserData, getWordList} from './dbUtil';
 import {query} from './agent';
+
+import Register from './register';
+import Timeline from './timeline';
+import SearchBox from './components/SearchBox';
 
 class Main extends Component{
   constructor(props, state){
@@ -30,56 +28,21 @@ class Main extends Component{
     this.state = {
       emitter,
       contents: 0,
-      wordList: [],
+      wordList: [{
+        key: '覚えたい単語',
+        value: '覚えたい意味',
+      }],
+      searchWord: '',
       userId: this.props.userId,
-      userInfo: {},
-      userScore: {},
-      userBookScore: {}
+      userInfo: {}
     };
 
-    this.state.emitter.on('cookieStart',(id)=>{
-      //単語帳実践モード
-      getWordList(id)
-      .then((results)=>{
-        let wordList = results.map((data)=>{
-          return {
-            key: data.keyText,
-            value: data.valueText,
-            ate: false //TODO ate情報とってくる
-          };
-        });
-
-        //テストよう
-        if(wordList.length <= 0){
-          wordList = [
-            {key: 'key', value: 'value', ate: true},
-            {key: 'key2', value: 'value2', ate: false},
-          ];
-        }
-
-        this.setState({ 
-          contents: 3,
-          wordList: wordList
-        });
-      }).catch((err)=>{
-        console.log('getWordList',err);
-        //テストよう
-        let wordList = [
-          {key: 'key', value: 'value', ate: true},
-          {key: 'key2', value: 'value2', ate: false},
-        ];
-
-        this.setState({ 
-          contents: 3, //テスト用
-          wordList: wordList
-        });
-      });
-    }).on('cookieRegister',()=>{
-      //TODO 単語帳登録モード
-    }).on('cookieAte', (id, ate)=>{
-      const list = this.state.wordList;
-      list[id].ate = ate;
-      this.setState({wordList: list});
+    this.state.emitter.on('cookieRegister', (kv)=>{
+      const wordlist = this.state.wordList;
+      wordlist.push(kv);
+      this.setState({wordList: wordlist});
+    }).on('cookieSearch', (searchWord)=> {
+      this.setState({searchWord});
     });
 
   }
@@ -89,9 +52,7 @@ class Main extends Component{
     getUserData(this.userId)
     .then((results)=>{
       this.setState({
-        userInfo: results.userInfo,
-        userScore: results.userScore,
-        userBookScore: results.userBookScore,
+        userInfo: results.userInfo
       });
     }).catch((err)=>{
       console.log('getUserData',err);
@@ -102,21 +63,13 @@ class Main extends Component{
     this.setState({contents: 0});
   }
 
-  handleCookieBox() {
-    this.setState({contents: 1});
-  }
-
-  handleCookieCommunity() {
-    this.setState({contents: 2});
-  }
-
   handleLogout() {
     this.props.onLogout(this.userId);
   }
 
   render() {
     const styles = {
-      center: {
+      main: {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-around',
@@ -131,15 +84,6 @@ class Main extends Component{
         tableLayout: 'fixed',
         width: '90%'
       },
-      tableStyle2: {
-        border : '1px solid black',
-        borderCollapse: 'collapse',
-        borderColor: 'red',
-        height: '450px',
-        margin: '10 auto',
-        tableLayout: 'fixed',
-        width: '90%'
-      },
       titleStyle: {
         color: 'red',
         fontSize: '30px'
@@ -147,8 +91,26 @@ class Main extends Component{
       tdStyle1: {
         border : '1px solid orange',
       },
-      tdStyle2: {
-        border : '1px solid orange',
+      mainTable: {
+        border : '1px solid black',
+        borderColor: 'red',
+        height: '450px',
+        margin: '10 auto',
+        tableLayout: 'fixed',
+        width: '90%',
+        display: 'flex',
+        flexDirection: 'column',
+        flexWrap: 'nowrap',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+      },
+      register: {
+//        height: '150px',
+        margin: 30
+      },
+      timeline: {
+        width: '450px',
+        height: '400px',
       },
     };
 
@@ -156,55 +118,31 @@ class Main extends Component{
     
     if(this.state.contents === 0){
       page = (
-            <table style={styles.tableStyle2}>
-            <tbody>
-              <tr>
-                <td style={styles.tdStyle2}>
-                  <MyList {...this.state}/>
-                </td>
-              </tr>
-              <tr>
-                <td style={styles.tdStyle2}>
-                  <Discovery {...this.state}/>
-                </td>
-              </tr>
-            </tbody>
-            </table>
+        <div style={styles.mainTable}>
+          <div style={styles.register}>
+            <Register {...this.state}/>
+          </div>
+          <div style={styles.timeline}>
+            <Timeline {...this.state}/>
+          </div>
+        </div>
       );
     }
     else if(this.state.contents === 1){
-      page = <CookieBox {...this.state}/>;
-    }
-    else if(this.state.contents === 2){
-      page = <CookieCommunity {...this.state}/>;
-    }
-    else if(this.state.contents === 3){
-      page = <Words {...this.state}/>;
+      page = <div/>;
     }
 
     return (
       <div>
-        <div style={styles.center}>
+        <div style={styles.main}>
           <table style={styles.tableStyle1}>
           <tbody>
             <tr>
               <td style = {styles.tdStyle1}>
-                <img src='../img/logo.png' style={{cursor: 'pointer'}} width='100%' onTouchTap={this.handleTop.bind(this)}/>
+                <img src='../img/title_logo.png' style={{cursor: 'pointer'}} width='100%' onTouchTap={this.handleTop.bind(this)}/>
               </td>
               <td style = {styles.tdStyle1}>
-                <FlatButton onClick={this.handleCookieBox.bind(this)}>Cookie Box</FlatButton>
-              </td>
-              <td style = {styles.tdStyle1}>
-                <FlatButton onClick={this.handleCookieCommunity.bind(this)}>Cookie Community</FlatButton>
-              </td>
-              <td style = {styles.tdStyle1}>
-                Search Other Sweets
-              </td>
-              <td style = {styles.tdStyle1}>
-                <FlatButton label="Notification" />
-              </td>
-              <td style = {styles.tdStyle1}>
-                <FlatButton label="Edit Profile" />
+                <SearchBox {...this.state}/>
               </td>
               <td style = {styles.tdStyle1}>
                 <FlatButton label="Logout" onClick={this.handleLogout.bind(this)} />

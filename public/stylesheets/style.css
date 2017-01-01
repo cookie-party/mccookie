@@ -6,3 +6,51 @@ body {
 a {
   color: #00B7FF;
 }
+
+.example-appear {
+  opacity: 0.01;
+}
+
+.example-appear.example-appear-active {
+  opacity: 1;
+  transition: opacity 300ms ease-in;
+}
+
+.example-enter {
+  opacity: 0.01;
+}
+
+.example-enter.example-enter-active {
+  opacity: 1;
+  transition: opacity 300ms ease-in;
+}
+
+.animation-appear {
+  opacity: 0;
+  transition: opacity 300ms ease-in; 
+}
+
+.animation-appear.example-appear-active {
+  opacity: 1;
+  transition: opacity 300ms ease-in;
+}
+
+.animation-enter {
+  opacity:.01;
+  transform:translateY(50%) scale(.95,.95);
+  transition:all 1s ease-out;
+}
+.animation-enter.animation-enter-active {
+  opacity:1;
+  transform:translateY(0) scale(1,1);
+}
+
+.animation-leave {
+  opacity:1;
+  transform:translateY(0) scale(1,1);
+  transition:all .2s ease-out;
+}
+.animation-leave.animation-leave-active {
+  opacity:.01;
+  transform:translateY(5%) scale(.98,.98);
+}

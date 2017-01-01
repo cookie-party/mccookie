@@ -10,10 +10,11 @@ const renderFullPage = function(config) {
       <head>
           <meta charset="utf-8">
           <title>Mccookie</title>
+          <link rel="stylesheet" type="text/css" href="./stylesheets/style.css">
       </head>
 
-      <body>
-
+      <body bgcolor='#FEFFEA'>
+      
       <div id = "root"></div>
 
       <script>
@@ -34,3 +35,5 @@ const serverSideRendering = function(res, config){
 };
 
 module.exports = serverSideRendering;
+
+//          <link rel=“stylesheet” href="stylesheets/style.css”/>
