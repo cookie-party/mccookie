@@ -94,7 +94,7 @@ class Main extends Component{
       mainTable: {
         border : '1px solid black',
         borderColor: 'red',
-        height: '450px',
+//        height: '450px',
         margin: '10 auto',
         tableLayout: 'fixed',
         width: '90%',

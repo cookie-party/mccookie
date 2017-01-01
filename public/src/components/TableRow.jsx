@@ -8,6 +8,11 @@ require('velocity-animate/velocity.ui');
 
 import {VelocityComponent, velocityHelpers} from 'velocity-react';
 
+import StarIcon from 'material-ui/svg-icons/toggle/star';
+import LibraryAddIcon from 'material-ui/svg-icons/av/library-add';
+import ReplyIcon from 'material-ui/svg-icons/content/reply';
+import IconView from './IconView';
+
 const FlipAnimations = {
   down: velocityHelpers.registerEffect({
     defaultDuration: 1100,
@@ -62,14 +67,26 @@ export class TableRow extends Component {
     this.setState({ hovering: false });
   }
 
+  onReply() {
+    console.log('onReply');
+  }
+
+  onAddMyList() {
+    console.log('onAddMyList');
+  }
+
+  onLike() {
+    console.log('onLike');
+  }
+
   render() {
     const styles = {
-      top: {
+      row: {
         display: 'flex',
         flexFlow: 'row wrap',
         alignItems: 'flexStart',
       },
-      main: {
+      column: {
         display: 'flex',
         flexFlow: 'column wrap',
         alignItems: 'flexStart',
@@ -80,8 +97,8 @@ export class TableRow extends Component {
         alignItems: 'flexStart',
       },
       icon: {
-        width: '50px',
-        height: '50px'
+        width: 50,
+        height: 50,
       },
       userid: {
         width: '50px',
@@ -106,6 +123,12 @@ export class TableRow extends Component {
         alignItems: 'center',
         animation: 'roll 2s linear infinite'
       },
+      smallIcon: {
+        width: 20,
+        height: 20,
+        fill: '#42AFE3', //d0d8e5
+        cursor: 'pointer',
+      }, 
     };
 
     const item = this.props.item;
@@ -145,6 +168,20 @@ export class TableRow extends Component {
       ); 
     }
 
+    const iconlist = (
+      <div style={styles.row}>
+        <div style={{margin: 5}}>
+          <IconView icon={ReplyIcon} style={styles.smallIcon} onClick={this.onReply.bind(this)}/>
+        </div>
+        <div style={{margin: 5}}>
+          <IconView icon={LibraryAddIcon} style={styles.smallIcon} onClick={this.onAddMyList.bind(this)}/>
+        </div>
+        <div style={{margin: 5}}>
+          <IconView icon={StarIcon} style={styles.smallIcon} onClick={this.onLike.bind(this)}/>
+        </div>
+      </div>
+    );
+
     let flipAnimation;
     if (this.state.hovering) {
       flipAnimation = FlipAnimations.up;
@@ -152,9 +189,8 @@ export class TableRow extends Component {
       flipAnimation = FlipAnimations.down;
     }
 
-
     const content = (
-      <div style={styles.main}>
+      <div style={styles.column}>
         <div style={styles.header}>
           <div style={styles.username}>
             {username}
@@ -177,6 +213,9 @@ export class TableRow extends Component {
           </Paper>
         </div>
         </VelocityComponent>
+        <div style={styles.row}>
+          {iconlist}
+        </div>
       </div>
     );
 
@@ -190,14 +229,14 @@ export class TableRow extends Component {
           transitionLeave={true}
           transitionLeaveTimeout={500}
           >
-      <div style={styles.top}>
+        <div style={styles.row}>
           <div style={{margin: 10}}>
             <img src={icon} style={styles.icon}/>
           </div>
           <div>
             {content}
           </div>
-      </div>
+        </div>
       </ReactCSSTransitionGroup>
     );
   }
