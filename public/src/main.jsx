@@ -33,7 +33,7 @@ class Main extends Component{
       }],
       searchWord: '',
       userId: this.props.userId,
-      userInfo: {}
+      userInfo: {},
     };
 
     this.state.emitter.on('cookieRegister', (kv)=>{

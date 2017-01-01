@@ -14,7 +14,17 @@ export default class Register extends Component {
     this.state = {
       key: '',
       value: '',
+      focused: false,
     };
+  }
+
+  onFocusRegister() {
+    this.setState({focused: true});
+  }
+  onUnfocusRegister() {
+    if(!this.state.key){
+      this.setState({focused: false});
+    }
   }
 
   onChangeKey(e) {
@@ -24,7 +34,7 @@ export default class Register extends Component {
     this.setState({value: e.target.value});
   }
   onClickRegister(e){
-    this.setState({key: '', value: ''});
+    this.setState({key: '', value: '', focused: false});
     this.props.emitter.emit('cookieRegister', {key: this.state.key, value: this.state.value});
   }
 
@@ -72,27 +82,31 @@ export default class Register extends Component {
 
     const icon = this.props.userInfo.icon || '../img/satomi.jpg';
 
-    return (
-      <div style={styles.row}>
-        <div style={{width: '50px', margin: 10}}>
-            <img src={icon} style={styles.icon}/>
+    const wordInput = (
+      <div style={styles.row}
+        onFocus={this.onFocusRegister.bind(this)}
+        onBlur={this.onUnfocusRegister.bind(this)}
+      >
+        <div style={{margin: 10}}>
+          <TextField
+          hintText='単語'
+          value={this.state.key}
+          onChange={this.onChangeKey.bind(this)}
+          multiLine={true}
+          rows={1}
+          rowsMax={2}
+          autoFocus={this.state.focused}
+          />
         </div>
-        <div style={styles.column}>
-          <div style={styles.row}>
-            <div style={{margin: 10}}>
-                <TextField
-                hintText='単語'
-                value={this.state.key}
-                onChange={this.onChangeKey.bind(this)}
-                multiLine={true}
-                rows={1}
-                rowsMax={2}
-                />
-            </div>
-            <div style={{margin: 20}}>
-              <IconView icon={SchoolIcon} style={styles.smallIcon} onClick={this.onKeyDictionary.bind(this)}/>
-            </div>
-          </div>
+        <div style={{margin: 20}}>
+          <IconView icon={SchoolIcon} style={styles.smallIcon} onClick={this.onKeyDictionary.bind(this)}/>
+        </div>
+      </div>
+    );
+
+    const registerMainView = (
+      <div>
+          {wordInput}
           <div style={styles.row}>
             <div style={{margin: 10}}>
                 <TextField
@@ -119,6 +133,24 @@ export default class Register extends Component {
               <RaisedButton label="登録" primary={true} onClick={this.onClickRegister.bind(this)} />
             </div>
           </div>
+        </div>
+    );
+
+    let registerView = <div/>;
+    if(this.state.focused){
+      registerView = registerMainView;
+    }
+    else {
+      registerView = wordInput;
+    }
+
+    return (
+      <div style={styles.row}>
+        <div style={{width: '50px', margin: 10}}>
+            <img src={icon} style={styles.icon}/>
+        </div>
+        <div style={styles.column}>
+          {registerView}
         </div>
       </div>
     );
