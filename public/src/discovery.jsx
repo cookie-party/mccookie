@@ -13,10 +13,7 @@ const styles = {
   gridList: {
     display: 'flex',
     flexWrap: 'nowrap',
-//    width: 500,
-//    height: 450,
     overflowX: 'auto',
-//    overflowY: 'auto',
   },
 };
 
@@ -53,15 +50,15 @@ const images = tilesData.map((tile) => (
           title={tile.title}
           subtitle={<span>by <b>{tile.author}</b></span>}
           actionIcon={<IconButton><StarBorder color="white" /></IconButton>}
-        >
+  >
           <img src={tile.img} />
-        </GridTile>
-      ));
+  </GridTile>
+));
 
 const Discovery = () => (
   <div style={styles.root}>
     <GridList
-      cellHeight={180}
+      cellHeight={150}
       style={styles.gridList}
     >
       <Subheader>Discovery</Subheader>

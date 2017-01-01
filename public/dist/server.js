@@ -12,7 +12,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var renderFullPage = function renderFullPage(config) {
   //console.log('dir',__dirname);
-  return '\n    <!DOCTYPE html>\n      <html>\n\n      <head>\n          <meta charset="utf-8">\n          <title>Mccookie</title>\n      </head>\n\n      <body>\n\n      <div id = "root"></div>\n\n      <script>\n        var APP_PROPS = ' + JSON.stringify(config) + ';\n      </script>\n\n      <script src="dist/bundle.js"></script>\n\n      </body>\n      </html>\n\n    ';
+  return '\n    <!DOCTYPE html>\n      <html>\n\n      <head>\n          <meta charset="utf-8">\n          <title>Mccookie</title>\n          <link rel="stylesheet" type="text/css" href="./stylesheets/style.css">\n      </head>\n\n      <body bgcolor=\'#FEFFEA\'>\n      \n      <div id = "root"></div>\n\n      <script>\n        var APP_PROPS = ' + JSON.stringify(config) + ';\n      </script>\n\n      <script src="dist/bundle.js"></script>\n\n      </body>\n      </html>\n\n    ';
 };
 
 var serverSideRendering = function serverSideRendering(res, config) {
@@ -21,3 +21,5 @@ var serverSideRendering = function serverSideRendering(res, config) {
 };
 
 module.exports = serverSideRendering;
+
+//          <link rel=“stylesheet” href="stylesheets/style.css”/>
