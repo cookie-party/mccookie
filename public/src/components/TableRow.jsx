@@ -3,16 +3,63 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import Paper from 'material-ui/Paper';
 import IconCached from 'material-ui/svg-icons/action/cached';
 
+require('velocity-animate');
+require('velocity-animate/velocity.ui');
+
+import {VelocityComponent, velocityHelpers} from 'velocity-react';
+
+const FlipAnimations = {
+  down: velocityHelpers.registerEffect({
+    defaultDuration: 1100,
+    calls: [
+      [{
+        transformPerspective: [ 800, 800 ],
+        transformOriginX: [ '50%', '50%' ],
+        transformOriginY: [ 0, 0 ],
+        rotateY: [0, 'spring'],
+        backgroundColor: ['#3f83b7', '#5797c0'],
+      }, 1, {
+        delay: 100,
+        easing: 'ease-in',
+      }]
+    ],
+  }),
+
+  // Flips the box up nearly 180°.
+  up: velocityHelpers.registerEffect({
+    defaultDuration: 200,
+    calls: [
+      [{
+        transformPerspective: [ 800, 800 ],
+        transformOriginX: [ '50%', '50%' ],
+        transformOriginY: [ 0, 0 ],
+        rotateY: 180,
+        backgroundColor: '#5797c0',
+      }]
+    ],
+  }),
+};
+
 export class TableRow extends Component { 
   constructor(props, state){
     super(props,state);
     this.state = {
-      keytouch: false
+      keytouch: false,
+      hovering: false,
     };
   }
 
   handleClicked(){
+    //TODO detailを出す
     this.setState({keytouch: !this.state.keytouch});
+  }
+
+  whenMouseEntered () {
+    this.setState({ hovering: true });
+  }
+
+  whenMouseLeft() {
+    this.setState({ hovering: false });
   }
 
   render() {
@@ -75,12 +122,36 @@ export class TableRow extends Component {
     }
 
     let itemView = '';
-    if(this.state.keytouch){
-      itemView = key;
+    if(this.state.hovering){ 
+      itemView = (
+        <div style={{margin: 20, transform: 'rotateY(180deg)'}}>
+          {value}
+        </div>
+      ); 
     }
     else {
-      itemView = value;
+      itemView = (
+        <ReactCSSTransitionGroup
+          transitionName="rotateString"
+          transitionAppear={true}
+          transitionAppearTimeout={500}
+          transitionEnter={false}
+          transitionLeave={false}
+          >
+          <div style={{margin: 20}}>
+            {key}
+          </div>
+        </ReactCSSTransitionGroup>
+      ); 
     }
+
+    let flipAnimation;
+    if (this.state.hovering) {
+      flipAnimation = FlipAnimations.up;
+    } else {
+      flipAnimation = FlipAnimations.down;
+    }
+
 
     const content = (
       <div style={styles.main}>
@@ -95,16 +166,17 @@ export class TableRow extends Component {
             {time} ms
           </div>
         </div>
+        <VelocityComponent animation={flipAnimation}>
+        <div
+          onMouseEnter={this.whenMouseEntered.bind(this)}
+          onMouseLeave={this.whenMouseLeft.bind(this)}>
           <Paper style={styles.value} zDepth={2} onTouchTap={this.handleClicked.bind(this)}>
             <div style={styles.itemView}>
-              <div style={{margin: 20}}>
                   {itemView}
-              </div>
-              <div>
-                <IconCached/>
-              </div>
             </div>
           </Paper>
+        </div>
+        </VelocityComponent>
       </div>
     );
 
