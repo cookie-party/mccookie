@@ -1,0 +1,36 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.animation-enter {
+  opacity:.01;
+  transform:translateY(50%) scale(.95,.95);
+  transition:all 1s ease-out;
+  &#{&}-active {
+    opacity:1;
+    transform:translateY(0) scale(1,1);
+  }
+}
+.animation-leave {
+  opacity:1;
+  transform:translateY(0) scale(1,1);
+  transition:all .2s ease-out;
+  &#{&}-active {
+    opacity:.01;
+    transform:translateY(5%) scale(.98,.98);
+  }
+}
+
+.rotateString-appear {
+  opacity: 0;
+  &#{&}-active {
+    opacity: 0;
+//    transform: rotateY(180deg);
+//    transition-delay: .5s;
+  }
+}

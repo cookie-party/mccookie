@@ -6,6 +6,7 @@ import webpack from 'webpack-stream';
 import webpackConfig from './webpack.config.js';
 import env from 'gulp-env';
 import nodemon from 'gulp-nodemon';
+import sass from 'gulp-sass';
 
 gulp.task('webpack', ()=> {
   return gulp.src('./public/src/*.jsx')
@@ -19,6 +20,12 @@ gulp.task('ssr', ()=> {
     presets: ['es2015','react']
   }))
   .pipe(gulp.dest('./public/dist/'));
+});
+
+gulp.task('sass', ()=>{
+  gulp.src('./public/sass/**/*.scss')
+    .pipe(sass())
+    .pipe(gulp.dest('./public/stylesheets/'));
 });
 
 gulp.task('run', ()=> {
@@ -36,8 +43,12 @@ gulp.task('run', ()=> {
 });
 
 gulp.task('watch', ()=>{
-  gulp.watch(['./public/src/**/*.js','./public/src/**/*.jsx'], ['webpack', 'ssr']);
+  gulp.watch([
+    './public/src/**/*.js',
+    './public/src/**/*.jsx',
+    './public/sass/**/*.scss',
+  ], ['webpack', 'ssr', 'sass']);
 });
 
-gulp.task('default', ['webpack', 'ssr', 'run', 'watch']);
+gulp.task('default', ['webpack', 'ssr', 'sass', 'run', 'watch']);
 
