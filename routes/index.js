@@ -67,14 +67,55 @@ pool.getConnection((err, conn)=>{
   //データ書込
   const insertData = (conn, target, data)=>{
     return new Promise((resolve, reject)=>{
+      const id = 1; //TODO request-header にユーザidを入れたい
       console.log('insertData:'+target,data);
+      var insertId = -1;
       if(conn && data){
-        conn.query('INSERT INTO '+target+' SET ?', data, function(err, result) {
-          if (err){ reject(err); }
-          else {
-            console.log(result.insertId);
-            resolve(result.insertId);
-          }
+        conn.beginTransaction(function(err) {
+          if (err) { throw err; }
+          conn.query('INSERT INTO '+target+' SET ?', data, function(err, result) {
+            if (err){ 
+              //insertに失敗したら戻す
+              conn.rollback(function() {
+                throw err; 
+              });
+            }
+            else {
+              //TODO wordsだったらユーザテーブルにidを追加
+              if(target === 'words') {
+                conn.query('SELECT * FROM user WHERE id=?', id, (err, results)=>{
+                  if(err) { throw err; }
+                  else {
+                    let userInfo = results[0];
+                    insertId = result.insertId;
+                    let myWordIdlist = userInfo.myWordIdlist;
+                    myWordIdlist = myWordIdlist.length === 0 ? insertId : myWordIdlist + ',' + insertId;
+                    console.log('myWordIdlist',myWordIdlist);
+                    conn.query('UPDATE user SET myWordIdlist = ? WHERE id = ?', 
+                    [myWordIdlist, 1], function(err, result) {
+                      if(err) {
+                        conn.rollback(function() {
+                          throw err; 
+                        });
+                      }
+                      else {
+                        //コミットする
+                        conn.commit(function(err) {
+                          if (err) { 
+                            conn.rollback(function() {
+                              throw err;
+                            });
+                          }
+                          console.log('success!');
+                          resolve();
+                        });
+                      }
+                    });
+                  }
+                });
+              }
+            }
+          });
         });
       }else{
         resolve(-1);
@@ -83,6 +124,7 @@ pool.getConnection((err, conn)=>{
   };
 
   //データ上書き
+  //TODO id指定で特定のカラムの変更を可能に
   const updateData = (conn, target, data)=>{
     return new Promise((resolve, reject)=>{
       const id = data.id;

@@ -13,6 +13,7 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import Paper from 'material-ui/Paper';
 
 import {getUserData} from './util/dbUtil';
+import {query, post} from './util/agent';
 
 import Register from './register';
 import Timeline from './timeline';
@@ -37,9 +38,20 @@ class Main extends Component{
     };
 
     this.state.emitter.on('cookieRegister', (kv)=>{
-      const wordlist = this.state.wordList;
-      wordlist.push(kv);
-      this.setState({wordList: wordlist});
+      post('words', {
+        keyText: kv.key,
+        valueText: kv.value,
+        comment: '',
+        tags: '',
+        activate: 1
+      }).then((res)=>{
+        const wordlist = this.state.wordList;
+        wordlist.push(kv);
+        this.setState({wordList: wordlist});
+      }).catch((err)=>{
+        alert('Regist Error', err);
+        console.log('Regist Error', err);
+      });
     }).on('cookieSearch', (searchWord)=> {
       this.setState({searchWord});
     });
@@ -53,6 +65,24 @@ class Main extends Component{
       this.setState({
         userInfo: results.userInfo
       });
+      const widList = results.userInfo.myWordIdlist;
+      let getWordQueries = [];
+      if(widList){
+        getWordQueries = widList.split(',').map((id)=>{
+          return query('words', id);
+        });
+      }
+      return Promise.all(getWordQueries);
+    }).then((results)=>{
+      if(results.length > 0){
+        const wordList = this.state.wordList;
+        results.map((r)=>{
+          wordList.push({key: r.keyText, value: r.valueText});
+        });
+        this.setState({
+          wordList: wordList
+        });
+      }
     }).catch((err)=>{
       console.log('getUserData',err);
     });
