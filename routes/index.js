@@ -200,6 +200,19 @@ pool.getConnection((err, conn)=>{
     });
   });
 
+  /* GET Dictionary. */
+  router.get('/ejdic', function(req, res, next) {
+    const dictionary = require('./ref/ejdic');
+    let meaning = {result: false, meaning: 'undefined'};
+    dictionary.forEach((item)=>{
+      if(item.word === req.query.id){
+        meaning = {result: true, meaning: item.meaning};
+      }
+    });
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(meaning));
+  });
+
 });
 
 module.exports = router;

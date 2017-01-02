@@ -7,6 +7,7 @@ import AddPhotoIcon from 'material-ui/svg-icons/image/add-a-photo';
 import LabelOutlineIcon from 'material-ui/svg-icons/action/label-outline';
 
 import IconView from './components/IconView';
+import Dictionary from './components/Dictionary';
 
 export default class Register extends Component {
   constructor(props, state){
@@ -15,6 +16,8 @@ export default class Register extends Component {
       key: '',
       value: '',
       focused: false,
+      keyDictionary: false,
+      valueDictionary: false,
     };
   }
 
@@ -39,11 +42,11 @@ export default class Register extends Component {
   }
 
   onKeyDictionary() {
-    console.log('onKeyDictionary');
+    this.setState({keyDictionary: !this.state.keyDictionary});
   }
 
   onValueDictionary() {
-    console.log('onValueDictionary');
+    this.setState({valueDictionary: !this.state.valueDictionary});
   }
 
   onAddTag() {
@@ -100,6 +103,7 @@ export default class Register extends Component {
         </div>
         <div style={{margin: 20}}>
           <IconView icon={SchoolIcon} style={styles.smallIcon} onClick={this.onKeyDictionary.bind(this)}/>
+          <Dictionary search={this.state.key} flag={this.state.keyDictionary} onClose={this.onKeyDictionary.bind(this)}/>
         </div>
       </div>
     );
@@ -120,6 +124,7 @@ export default class Register extends Component {
             </div>
             <div style={{margin: 20}}>
               <IconView icon={SchoolIcon} style={styles.smallIcon} onClick={this.onValueDictionary.bind(this)}/>
+              <Dictionary search={this.state.value} flag={this.state.valueDictionary} onClose={this.onValueDictionary.bind(this)}/>
             </div>
           </div>
           <div style={styles.row}>

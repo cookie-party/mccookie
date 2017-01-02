@@ -16,7 +16,7 @@ export default class Timeline extends Component {
         alignItems: 'stretch',
       },
       item: {
-        width: '450px'
+//        width: 700
       }
     };
 

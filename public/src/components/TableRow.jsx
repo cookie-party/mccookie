@@ -110,8 +110,10 @@ export class TableRow extends Component {
         fontWeight: 'bold',
       },
       value: {
+        width: 400,
+        height: 100,
         cursor: 'pointer',
-        fontSize: '20px'
+        fontSize: '10pt'
       },
       time: {
         width: '30px',

@@ -104,17 +104,24 @@ class Main extends Component{
         alignItems: 'center',
       },
       register: {
+        display: 'flex',
+        flexWrap: 'nowrap',
+        justifyContent: 'space-around',
+        width: 700,
 //        height: '150px',
         margin: 30
       },
       timeline: {
-        width: '450px',
-        height: '400px',
+        display: 'flex',
+        flexWrap: 'nowrap',
+        justifyContent: 'space-around',
+        width: 700,
+//        height: '600',
       },
     };
 
     let page = <div/>;
-    
+
     if(this.state.contents === 0){
       page = (
         <div style={styles.mainTable}>
