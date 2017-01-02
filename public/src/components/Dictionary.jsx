@@ -24,14 +24,6 @@ export default class Dictionary extends Component{
       this.setState({meaning: this.state.cached[searchWord], searching: false});
     } else {
       this.setState({searching: true});
-      /*
-      setTimeout(()=>{
-        this.setState({
-          meaning: 'meaning',
-          searching: false
-        });
-      }, 1000);
-      */
       query('ejdic', searchWord)
       .then((result)=>{
         const cached = this.state.cached;
@@ -64,18 +56,22 @@ export default class Dictionary extends Component{
     */
 
     const action = [
-      <RaisedButton
-        label="Cancel"
-        primary={true}
-        onTouchTap={this.props.onClose}
-      />,
       <CopyToClipboard text={this.state.meaning}
         onCopy={() => this.setState({copied: true})}>
         <RaisedButton
           label="Copy"
           primary={true}
+          onTouchTap={()=>{
+            this.props.onDictionary({target:{value:this.state.meaning}});
+            this.props.onClose();
+          }}
         />
-      </CopyToClipboard>
+      </CopyToClipboard>,
+      <RaisedButton
+        label="Cancel"
+        primary={false}
+        onTouchTap={this.props.onClose}
+      />
     ];
 
     return (

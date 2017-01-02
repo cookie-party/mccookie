@@ -111,9 +111,9 @@ export class TableRow extends Component {
       },
       value: {
         width: 400,
-        height: 100,
+//        height: 120,
         cursor: 'pointer',
-        fontSize: '10pt'
+        fontSize: '20pt'
       },
       time: {
         width: '30px',
@@ -140,6 +140,7 @@ export class TableRow extends Component {
     const userid = item.username || '@satomi';
     const key = item.key || 'nokey';
     const value = item.value || 'novalue';
+    let strLength = 0;
     let time = 0;
     const now = new Date().getTime;
     if(item.time){
@@ -149,25 +150,31 @@ export class TableRow extends Component {
     let itemView = '';
     if(this.state.hovering){ 
       itemView = (
-        <div style={{margin: 20, transform: 'rotateY(180deg)'}}>
-          {value}
-        </div>
-      ); 
-    }
-    else {
-      itemView = (
         <ReactCSSTransitionGroup
-          transitionName="rotateString"
+          transitionName="opacity"
           transitionAppear={true}
-          transitionAppearTimeout={500}
-          transitionEnter={false}
+          transitionAppearTimeout={1000}
+          transitionEnter={true}
+          transitionEnterTimeout={1000}
           transitionLeave={false}
           >
-          <div style={{margin: 20}}>
-            {key}
+          <div style={{margin: 20, transform: 'rotateY(180deg)'}}>
+            {value}
           </div>
         </ReactCSSTransitionGroup>
       ); 
+      strLength = value.length;
+    }
+    else {
+      itemView = (
+        <div style={{margin: 20}}>
+          {key}
+        </div>
+      ); 
+      strLength = key.length;
+    }
+    if(strLength > 15) {
+      styles.value.fontSize = '12pt';
     }
 
     const iconlist = (

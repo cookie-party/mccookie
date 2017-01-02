@@ -103,7 +103,11 @@ export default class Register extends Component {
         </div>
         <div style={{margin: 20}}>
           <IconView icon={SchoolIcon} style={styles.smallIcon} onClick={this.onKeyDictionary.bind(this)}/>
-          <Dictionary search={this.state.key} flag={this.state.keyDictionary} onClose={this.onKeyDictionary.bind(this)}/>
+          <Dictionary
+           search={this.state.key}
+           flag={this.state.keyDictionary}
+           onClose={this.onKeyDictionary.bind(this)} 
+           onDictionary={this.onChangeValue.bind(this)}/>
         </div>
       </div>
     );
@@ -111,7 +115,7 @@ export default class Register extends Component {
     const registerMainView = (
       <div>
           {wordInput}
-          <div style={styles.row}>
+          <div style={{width: '100%'}}>
             <div style={{margin: 10}}>
                 <TextField
                 hintText="意味"
@@ -119,12 +123,8 @@ export default class Register extends Component {
                 onChange={this.onChangeValue.bind(this)}
                 multiLine={true}
                 rows={1}
-                rowsMax={2}
+                rowsMax={3}
                 />
-            </div>
-            <div style={{margin: 20}}>
-              <IconView icon={SchoolIcon} style={styles.smallIcon} onClick={this.onValueDictionary.bind(this)}/>
-              <Dictionary search={this.state.value} flag={this.state.valueDictionary} onClose={this.onValueDictionary.bind(this)}/>
             </div>
           </div>
           <div style={styles.row}>
