@@ -18,6 +18,7 @@ import {query, post} from './util/agent';
 import Register from './register';
 import Timeline from './timeline';
 import SearchBox from './components/SearchBox';
+import MyProfile from './myprof';
 
 class Main extends Component{
   constructor(props, state){
@@ -54,6 +55,10 @@ class Main extends Component{
       });
     }).on('cookieSearch', (searchWord)=> {
       this.setState({searchWord});
+    }).on('cookieEditMyprof', (searchWord)=> {
+      this.setState({contents: 1});
+    }).on('cookieRegisterMyprof', (searchWord)=> {
+      //register
     });
 
   }
@@ -90,6 +95,9 @@ class Main extends Component{
 
   handleTop() {
     this.setState({contents: 0});
+  }
+  handleMyprof() {
+    this.setState({contents: 1});
   }
 
   handleLogout() {
@@ -165,6 +173,9 @@ class Main extends Component{
       );
     }
     else if(this.state.contents === 1){
+      page = <MyProfile {...this.state}/>;
+    }
+    else if(this.state.contents === 2){
       page = <div/>;
     }
 
@@ -179,6 +190,9 @@ class Main extends Component{
               </td>
               <td style = {styles.tdStyle1}>
                 <SearchBox {...this.state}/>
+              </td>
+              <td style = {styles.tdStyle1}>
+                <FlatButton label="MyProfile" onClick={this.handleMyprof.bind(this)} />
               </td>
               <td style = {styles.tdStyle1}>
                 <FlatButton label="Logout" onClick={this.handleLogout.bind(this)} />
