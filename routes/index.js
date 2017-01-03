@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const pool = require('./dbConn');
-const tables = ['user','tags','wordbook','words','category','userScore','userBookScore'];
+const tables = ['user','tag','wordbook','words'];
 
 //mysql
 pool.getConnection((err, conn)=>{
@@ -68,52 +68,19 @@ pool.getConnection((err, conn)=>{
   const insertData = (conn, target, data)=>{
     return new Promise((resolve, reject)=>{
       const id = 1; //TODO request-header にユーザidを入れたい
-      console.log('insertData:'+target,data);
       var insertId = -1;
       if(conn && data){
         conn.beginTransaction(function(err) {
           if (err) { throw err; }
           conn.query('INSERT INTO '+target+' SET ?', data, function(err, result) {
-            if (err){ 
-              //insertに失敗したら戻す
-              conn.rollback(function() {
-                throw err; 
-              });
-            }
+            if (err){  conn.rollback(function() { throw err; });}
             else {
-              //TODO wordsだったらユーザテーブルにidを追加
-              if(target === 'words') {
-                conn.query('SELECT * FROM user WHERE id=?', id, (err, results)=>{
-                  if(err) { throw err; }
-                  else {
-                    let userInfo = results[0];
-                    insertId = result.insertId;
-                    let myWordIdlist = userInfo.myWordIdlist;
-                    myWordIdlist = myWordIdlist.length === 0 ? insertId : myWordIdlist + ',' + insertId;
-                    console.log('myWordIdlist',myWordIdlist);
-                    conn.query('UPDATE user SET myWordIdlist = ? WHERE id = ?', 
-                    [myWordIdlist, 1], function(err, result) {
-                      if(err) {
-                        conn.rollback(function() {
-                          throw err; 
-                        });
-                      }
-                      else {
-                        //コミットする
-                        conn.commit(function(err) {
-                          if (err) { 
-                            conn.rollback(function() {
-                              throw err;
-                            });
-                          }
-                          console.log('success!');
-                          resolve();
-                        });
-                      }
-                    });
-                  }
-                });
-              }
+              //コミットする
+              conn.commit(function(err) {
+                if (err) {  conn.rollback(function() { throw err; }); }
+                console.log('success!');
+                resolve();
+              });
             }
           });
         });
@@ -239,6 +206,143 @@ pool.getConnection((err, conn)=>{
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(err));
       });
+    });
+  });
+
+  /** worddata取得 */
+  router.get('/getTimeline', function(req, res, next) {
+    const userid = req.query.id || 1;
+    getDataById(conn, 'user', userid)
+    .then((result)=>{
+      const getWordsQuery = result.myWordIdlist.split(',').map((wordid)=>{
+        return getDataById(conn, 'words', wordid);
+      });
+      return Promise.all(getWordsQuery);
+    }).then((words)=>{
+      const setTagList = (word)=>{
+        return new Promise((resolve, reject)=>{
+          if(word.tags.length === 0 ){ resolve(word); }
+          const getTagsQuery = word.tags.split(',').map((tagid)=>{
+            return getDataById(conn, 'tag', tagid);
+          });
+          Promise.all(getTagsQuery).then((tagList)=>{
+            word.tagList = tagList;
+            resolve(word);
+          }).catch((err)=>{throw err;});
+        });
+      };
+      const setTagLists = words.map((word)=>{
+        return setTagList(word);
+      });
+      return Promise.all(setTagLists);
+    }).then((settedTagListWordList)=>{
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(settedTagListWordList));
+    }).catch((err)=>{
+      console.log('err',err);
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(err));
+    });
+  });
+
+  /** 
+   * register word data 
+   * */
+  /** タグ追加 */
+  const putTag = (tag)=>{
+    return new Promise((resolve,reject)=>{
+      conn.query('SELECT * FROM tag WHERE name=?', tag, function(err, result) {
+        if (err){ throw err; }
+        else if(result.length>0){
+          resolve(result.id);
+        } else {
+          conn.query('INSERT INTO tag SET ?', {name: tag}, function(err, result) {
+            if (err){ throw err; }
+            else {
+              resolve(result.insertId);
+            }
+          });
+        }
+      });
+    });
+  };
+  /** 単語追加 */
+  router.post('/newword', function(req, res, next) {
+    const id = 1; //TODO request-header にユーザidを入れたい
+    const tagList = req.body.tags.split(',');
+    if(conn){
+      conn.beginTransaction(function(err) {
+        if (err) { throw err; }
+        const putTags = tagList.map((tag)=>{
+          return putTag(tag);
+        });
+        Promise.all(putTags).then((ids)=>{
+          const data = {
+            keyText: req.body.key,
+            valueText: req.body.value,
+            tags: ids.join(','),
+            activate: 1
+          };
+          conn.query('INSERT INTO words SET ?', data, function(err, result) {
+            if (err){ conn.rollback(function() { throw err; }); }
+            else {
+              conn.query('SELECT * FROM user WHERE id=?', id, (err, results)=>{
+                if(err) { throw err; }
+                else {
+                  let insertId = result.insertId;
+                  let userInfo = results[0];
+                  let myWordIdlist = userInfo.myWordIdlist;
+                  myWordIdlist = myWordIdlist.length === 0 ? insertId : myWordIdlist + ',' + insertId;
+                  conn.query('UPDATE user SET myWordIdlist = ? WHERE id = ?', 
+                  [myWordIdlist, 1], function(err, result) {
+                    if (err){ conn.rollback(function() { throw err; }); }
+                    else {
+                      //コミットする
+                      conn.commit(function(err) {
+                        if (err) { conn.rollback(function() {throw err;}); }
+                        console.log('success!',result);
+                        res.writeHead(200, { 'Content-Type': 'application/json' });
+                        res.end(JSON.stringify(result));
+                      });
+                    }
+                  });
+                }
+              });
+            }
+          });
+
+        }).catch((err)=>{
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(err));
+        });
+      });
+    }else{
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end('{}');
+    }
+  });
+
+  /** System data */
+  router.get('/popularTags', function(req, res, next) {
+    const id = req.query.id || 1;
+    getDataById(conn, 'system', id)
+    .then((result)=>{
+      const getTagsQuery = result.popularTags.split(',').map((id)=>{
+        return getDataById(conn, 'tag', id);
+      });
+      Promise.all(getTagsQuery).then((items)=>{
+        const tags = items.map((item)=>{return item.name;});
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(tags));
+      }).catch((err)=>{
+        console.log('err',err);
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(err));
+      });
+    }).catch((err)=>{
+      console.log('err',err);
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(err));
     });
   });
 

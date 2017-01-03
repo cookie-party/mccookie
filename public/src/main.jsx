@@ -30,8 +30,11 @@ class Main extends Component{
       emitter,
       contents: 0,
       wordList: [{
+        id: 0,
         key: '覚えたい単語',
         value: '覚えたい意味',
+        tagList: ['#タグ付けも可能'],
+        updateDate: new Date().getTime()
       }],
       searchWord: '',
       userId: this.props.userId,
@@ -39,12 +42,11 @@ class Main extends Component{
     };
 
     this.state.emitter.on('cookieRegister', (kv)=>{
-      post('words', {
-        keyText: kv.key,
-        valueText: kv.value,
-        comment: '',
-        tags: '',
-        activate: 1
+      post('newword', {
+        id: kv.id,
+        key: kv.key,
+        value: kv.value,
+        tags: kv.tagList.join(','),
       }).then((res)=>{
         const wordlist = this.state.wordList;
         wordlist.push(kv);
@@ -59,6 +61,8 @@ class Main extends Component{
       this.setState({contents: 1});
     }).on('cookieRegisterMyprof', (searchWord)=> {
       //register
+    }).on('cookieItemDelete', (id)=> {
+      //delete
     });
 
   }
@@ -70,19 +74,12 @@ class Main extends Component{
       this.setState({
         userInfo: results.userInfo
       });
-      const widList = results.userInfo.myWordIdlist;
-      let getWordQueries = [];
-      if(widList){
-        getWordQueries = widList.split(',').map((id)=>{
-          return query('words', id);
-        });
-      }
-      return Promise.all(getWordQueries);
-    }).then((results)=>{
-      if(results.length > 0){
+      return query('getTimeline', this.userId);
+    }).then((words)=>{
+      if(words.length > 0){
         const wordList = this.state.wordList;
-        results.map((r)=>{
-          wordList.push({key: r.keyText, value: r.valueText});
+        words.map((r)=>{
+          wordList.push({id: r.id, key: r.keyText, value: r.valueText, tags: r.tagList, updateDate: r.updateDate});
         });
         this.setState({
           wordList: wordList

@@ -4,6 +4,7 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import StarIcon from 'material-ui/svg-icons/toggle/star';
 import LibraryAddIcon from 'material-ui/svg-icons/av/library-add';
 import ReplyIcon from 'material-ui/svg-icons/content/reply';
+import DeleteIcon from 'material-ui/svg-icons/action/delete';
 import IconView from './IconView';
 import WordPaper from './WordPaper';
 
@@ -22,6 +23,11 @@ export class TableRow extends Component {
 
   onLike() {
     console.log('onLike');
+  }
+
+  onDelete() {
+    console.log('onDelete');
+    this.props.emitter.emit('cookieDeleteItem', this.props.item.id);
   }
 
   render() {
@@ -89,6 +95,9 @@ export class TableRow extends Component {
         </div>
         <div style={{margin: 5}}>
           <IconView icon={StarIcon} style={styles.smallIcon} onClick={this.onLike.bind(this)}/>
+        </div>
+        <div style={{margin: 5}}>
+          <IconView icon={DeleteIcon} style={styles.smallIcon} onClick={this.onDelete.bind(this)}/>
         </div>
       </div>
     );

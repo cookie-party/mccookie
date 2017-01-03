@@ -19,6 +19,7 @@ export default class Dictionary extends Component{
   componentWillReceiveProps() {
     const dialogFlag = this.props.flag;
     const searchWord = this.props.search;
+    if(!searchWord) { return; }
 
     if(this.state.cached[searchWord]){
       this.setState({meaning: this.state.cached[searchWord], searching: false});

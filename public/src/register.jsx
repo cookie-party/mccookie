@@ -8,6 +8,7 @@ import LabelOutlineIcon from 'material-ui/svg-icons/action/label-outline';
 
 import IconView from './components/IconView';
 import Dictionary from './components/Dictionary';
+import AddTag from './components/AddTag';
 
 export default class Register extends Component {
   constructor(props, state){
@@ -15,9 +16,10 @@ export default class Register extends Component {
     this.state = {
       key: '',
       value: '',
+      tagList: [],
       focused: false,
-      keyDictionary: false,
-      valueDictionary: false,
+      openDictionary: false,
+      openAddTag: false,
     };
   }
 
@@ -34,23 +36,35 @@ export default class Register extends Component {
     this.setState({key: e.target.value});
   }
   onChangeValue(e) {
-    this.setState({value: e.target.value});
+    const value = e.target.value;
+    //タグ抽出
+    let tagStr = '', tagList = [];
+    if(value.indexOf('#')>0) {
+      tagStr = value.substring(value.indexOf(' #'));
+      const wspace=new String('\u3000');
+      tagStr = tagStr.replace( wspace , ' ' ) ;
+      tagStr = tagStr.replace( '\n' , ' ' ) ;
+      if(tagStr){
+        tagList = tagStr.split(' ');
+      }
+      tagList = tagList.filter((tag)=>{
+        if(tag.indexOf('#')>=0){
+          return tag;
+        }
+      });
+    }
+    this.setState({value: value, tagList: tagList});
   }
   onClickRegister(e){
     this.setState({key: '', value: '', focused: false});
-    this.props.emitter.emit('cookieRegister', {key: this.state.key, value: this.state.value});
+    this.props.emitter.emit('cookieRegister', this.state);
   }
 
-  onKeyDictionary() {
-    this.setState({keyDictionary: !this.state.keyDictionary});
+  onDictionary() {
+    this.setState({openDictionary: !this.state.openDictionary});
   }
-
-  onValueDictionary() {
-    this.setState({valueDictionary: !this.state.valueDictionary});
-  }
-
   onAddTag() {
-    console.log('onAddTag');
+    this.setState({openAddTag: !this.state.openAddTag});
   }
 
   onAddPhoto() {
@@ -102,11 +116,11 @@ export default class Register extends Component {
           />
         </div>
         <div style={{margin: 20}}>
-          <IconView icon={SchoolIcon} style={styles.smallIcon} onClick={this.onKeyDictionary.bind(this)}/>
+          <IconView icon={SchoolIcon} style={styles.smallIcon} onClick={this.onDictionary.bind(this)}/>
           <Dictionary
            search={this.state.key}
-           flag={this.state.keyDictionary}
-           onClose={this.onKeyDictionary.bind(this)} 
+           flag={this.state.openDictionary}
+           onClose={this.onDictionary.bind(this)} 
            onDictionary={this.onChangeValue.bind(this)}/>
         </div>
       </div>
@@ -122,7 +136,7 @@ export default class Register extends Component {
                 value={this.state.value}
                 onChange={this.onChangeValue.bind(this)}
                 multiLine={true}
-                rows={1}
+                rows={2}
                 rowsMax={3}
                 />
             </div>
@@ -133,6 +147,11 @@ export default class Register extends Component {
             </div>
             <div style={{margin: 20}}>
               <IconView icon={LabelOutlineIcon} style={styles.smallIcon} onClick={this.onAddTag.bind(this)}/>
+              <AddTag 
+              tagList={this.state.tagList}
+              flag={this.state.openAddTag}
+              onClose={this.onAddTag.bind(this)} 
+              onAddTag={(tag)=>this.onChangeValue({target:{value: this.state.value+' '+tag}})}/>
             </div>
             <div style={{margin: 20}}>
               <RaisedButton label="登録" primary={true} onClick={this.onClickRegister.bind(this)} />
