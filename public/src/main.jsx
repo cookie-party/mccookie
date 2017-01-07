@@ -20,6 +20,7 @@ import Register from './register';
 import Timeline from './timeline';
 import SearchBox from './components/SearchBox';
 import MyProfile from './myprof';
+import DialogBox from './components/DialogBox';
 
 class Main extends Component{
   constructor(props, state){
@@ -40,6 +41,8 @@ class Main extends Component{
       searchWord: '',
       userId: this.props.userId,
       userInfo: {},
+      onDeleteItem: ()=>{},
+      deleteDialogFlag: false,
     };
 
     this.state.emitter.on('cookieRegister', (kv)=>{
@@ -64,6 +67,29 @@ class Main extends Component{
       //register
     }).on('cookieItemDelete', (id)=> {
       //delete
+      const wordlist = this.state.wordList;
+      let deleteIdx = null;
+      wordlist.forEach((w, i)=>{
+        if(w.id === id){
+          deleteIdx = i;
+        }
+      });
+      if(deleteIdx){
+        this.setState({
+          deleteDialogFlag: true,
+          onDeleteItem:()=>{
+            wordlist.splice(deleteIdx, 1);
+            post('deleteItemId', {
+              id: id,
+              target: 'words'
+            }).then(()=>{
+              this.setState({wordList: wordlist, deleteDialogFlag: false});
+            }).catch(()=>{
+              alert('Miss Delete');
+            });
+          }
+        });
+      }
     });
 
   }
@@ -235,6 +261,18 @@ class Main extends Component{
 
           <div style={styles.main}>
             {page}
+          </div>
+
+          <div>
+            <DialogBox
+              title={'Delete Item'}
+              message={'単語を削除しますか？'}
+              flag={this.state.deleteDialogFlag}
+              onOK={this.state.onDeleteItem.bind(this)}
+              onCancel={()=>{
+                this.setState({deleteDialogFlag: false});
+              }}
+            />
           </div>
 
         </div>

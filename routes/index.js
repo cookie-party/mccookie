@@ -29,10 +29,13 @@ pool.getConnection((err, conn)=>{
       const sql = 'SELECT * FROM '+target+' WHERE id=?';
       if(conn && id){
         conn.query(sql, id, (err, results)=>{
+          console.log(results[0]);
           if(err) {
             reject(err);
           }
-          else {
+          else if(!results[0] || results[0].activate === 0){
+            resolve({});
+          }else {
             resolve(results[0]);
           }
         });
@@ -214,21 +217,27 @@ pool.getConnection((err, conn)=>{
     const userid = req.query.id || 1;
     getDataById(conn, 'user', userid)
     .then((result)=>{
-      const getWordsQuery = result.myWordIdlist.split(',').map((wordid)=>{
-        return getDataById(conn, 'words', wordid);
-      });
-      return Promise.all(getWordsQuery);
+      if(!result.myWordIdlist || result.myWordIdlist.length < 0){
+        return [];
+      }else{
+        const getWordsQuery = result.myWordIdlist.split(',').map((wordid)=>{
+          return getDataById(conn, 'words', wordid);
+        });
+        return Promise.all(getWordsQuery);
+      }
     }).then((words)=>{
       const setTagList = (word)=>{
         return new Promise((resolve, reject)=>{
-          if(word.tags.length === 0 ){ resolve(word); }
-          const getTagsQuery = word.tags.split(',').map((tagid)=>{
-            return getDataById(conn, 'tag', tagid);
-          });
-          Promise.all(getTagsQuery).then((tagList)=>{
-            word.tagList = tagList;
-            resolve(word);
-          }).catch((err)=>{throw err;});
+          if(!word.tags || word.tags.length === 0 ){ resolve(word); }
+          else {
+            const getTagsQuery = word.tags.split(',').map((tagid)=>{
+              return getDataById(conn, 'tag', tagid);
+            });
+            Promise.all(getTagsQuery).then((tagList)=>{
+              word.tagList = tagList;
+              resolve(word);
+            }).catch((err)=>{throw err;});
+          }
         });
       };
       const setTagLists = words.map((word)=>{
@@ -244,6 +253,35 @@ pool.getConnection((err, conn)=>{
       res.end(JSON.stringify(err));
     });
   });
+
+  /******** API ********/
+  router.post('/deleteItemId', function(req, res, next) {
+    const id = req.body.id;
+    const target = req.body.target;
+    if(id && target){
+      getDataById(conn, target, id)
+      .then((wordItem)=>{
+        if(!wordItem.activate){
+          return {};
+        }else{
+          wordItem.activate = 0;
+          return updateData(conn, target, wordItem);
+        }
+      }).then((result)=>{
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(result));
+      }).catch((err)=>{
+        console.log('err',err);
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(err));
+      });
+    }else{
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end('No data');
+    }
+  });
+
+
 
   /** 
    * register word data 
@@ -327,18 +365,18 @@ pool.getConnection((err, conn)=>{
     const id = req.query.id || 1;
     getDataById(conn, 'system', id)
     .then((result)=>{
-      const getTagsQuery = result.popularTags.split(',').map((id)=>{
-        return getDataById(conn, 'tag', id);
-      });
-      Promise.all(getTagsQuery).then((items)=>{
-        const tags = items.map((item)=>{return item.name;});
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(tags));
-      }).catch((err)=>{
-        console.log('err',err);
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(err));
-      });
+      if(!result.popularTags){
+        return [];
+      }else{
+        const getTagsQuery = result.popularTags.split(',').map((id)=>{
+          return getDataById(conn, 'tag', id);
+        });
+        return Promise.all(getTagsQuery);
+      }
+    }).then((items)=>{
+      const tags = items.map((item)=>{return item.name;});
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(tags));
     }).catch((err)=>{
       console.log('err',err);
       res.writeHead(400, { 'Content-Type': 'application/json' });

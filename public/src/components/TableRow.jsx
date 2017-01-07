@@ -27,7 +27,7 @@ export class TableRow extends Component {
 
   onDelete() {
     console.log('onDelete');
-    this.props.emitter.emit('cookieDeleteItem', this.props.item.id);
+    this.props.emitter.emit('cookieItemDelete', this.props.item.id);
   }
 
   render() {
