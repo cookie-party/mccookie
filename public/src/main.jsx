@@ -146,6 +146,9 @@ class Main extends Component{
         width: '100%'
       },
       titlebar: {
+        border : '.5px solid',
+        borderColor: '#fcefd6',
+        overflow: 'hidden',
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-around',
@@ -160,8 +163,8 @@ class Main extends Component{
         padding: 50,
       },
       mainTable: {
-        //border : '2px solid',
-        //borderColor: '#f9f6d9',
+        border : '.5px solid',
+        borderColor: '#fcefd6',
         backgroundColor: '#fffcfc',
         margin: '10 auto',
         width: '90%',
