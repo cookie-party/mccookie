@@ -8,9 +8,9 @@ injectTapEventPlugin();
 import IconButton from 'material-ui/IconButton';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
-import RaisedButton from 'material-ui/RaisedButton';
-//import FlatButton from 'material-ui/FlatButton';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import FaceIcon from 'material-ui/svg-icons/action/face';
+import FolderIcon from 'material-ui/svg-icons/file/folder';
 import Paper from 'material-ui/Paper';
 
 import {getUserData} from './util/dbUtil';
@@ -133,8 +133,9 @@ class Main extends Component{
         padding: 50,
       },
       mainTable: {
-        border : '1px solid',
-        borderColor: '#e9d97f',
+        //border : '2px solid',
+        //borderColor: '#f9f6d9',
+        backgroundColor: '#fffcfc',
         margin: '10 auto',
         width: '90%',
         display: 'flex',
@@ -174,18 +175,31 @@ class Main extends Component{
 
     const titleBar = (
       <div style={styles.row}>
-        <div style={{width: 200}}>
-          <img src='../img/title_logo.png' style={{cursor: 'pointer'}} width='100%' onTouchTap={this.handleTop.bind(this)}/>
+        <div style={{width: 250, height: 40, display: 'flex', justifyContent: 'space-around'}}>
+          <img src='../img/title_logo.png' style={{cursor: 'pointer'}} width='70%' onTouchTap={this.handleTop.bind(this)}/>
         </div>
         <div>
           <SearchBox {...this.state}/>
         </div>
-        <div style={{width: 250, display: 'flex'}}>
+        <div style={{width: 150, display: 'flex'}}>
           <div style={{margin: 10}}>
-            <RaisedButton label="MyProfile" onClick={this.handleMyprof.bind(this)} />
+            <IconMenu
+            iconButtonElement={<IconButton><FolderIcon /></IconButton>}
+            anchorOrigin={{horizontal: 'left', vertical: 'top'}}
+            targetOrigin={{horizontal: 'left', vertical: 'top'}}
+            >
+              <MenuItem primaryText='お気に入り' onClick={this.handleMyprof.bind(this)} ></MenuItem>
+            </IconMenu>
           </div>
           <div style={{margin: 10}}>
-            <RaisedButton label="Logout" onClick={this.handleLogout.bind(this)} />
+            <IconMenu
+            iconButtonElement={<IconButton><FaceIcon /></IconButton>}
+            anchorOrigin={{horizontal: 'left', vertical: 'top'}}
+            targetOrigin={{horizontal: 'left', vertical: 'top'}}
+            >
+              <MenuItem primaryText='MyProfile' onClick={this.handleMyprof.bind(this)} ></MenuItem>
+              <MenuItem primaryText='logout' onClick={this.handleLogout.bind(this)} ></MenuItem>
+            </IconMenu>
           </div>
         </div>
       </div>
