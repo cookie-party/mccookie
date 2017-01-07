@@ -16,6 +16,7 @@ export const query = (target, id, column)=> {
     const query = column? {id: id, column: column} : {id: id};
     request
       .get(url+target)
+      .set('userid', window.userId)
       .query(query)
       .end(function(err, res){
         if(err) reject(err);
@@ -29,6 +30,7 @@ export const post = (target, body)=> {
   return new Promise((resolve, reject)=>{
     request
       .post(url+target)
+      .set('userid', window.userId)
       .send(body)
       .end(function(err, res){
         if(err) reject(err);
@@ -42,6 +44,7 @@ export const update = (target, body)=> {
   return new Promise((resolve, reject)=>{
     request
       .put(url+target)
+      .set('userid', window.userId)
       .send(body)
       .end(function(err, res){
         if(err) reject(err);
@@ -55,6 +58,7 @@ export const deleteColumn = (target, id)=> {
   return new Promise((resolve, reject)=>{
     request
       .get(url+target)
+      .set('userid', window.userId)
       .query({id: id})
       .end(function(err, res){
         if(err) reject(err);

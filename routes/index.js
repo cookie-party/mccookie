@@ -101,35 +101,34 @@ pool.getConnection((err, conn)=>{
       console.log('updateData:'+target+'['+id+']',data);
       const sql = 'SELECT * FROM '+target+' WHERE id=?';
       if(conn && id){
-        conn.query(sql, id, (err, results)=>{
-          if(err) {
-            reject(err);
-          }
-          else {
-            const orgData = results[0];
-            var _targets = '';
-            Object.keys(orgData).forEach((key)=>{
-              if(key!=='id'){
-                _targets += key+'=?,';
-              }
-            });
-            const targets = _targets.substring(0,_targets.length-1);
-            const modData = Object.assign(orgData, data);
-            const updateData = Object.keys(modData).map((key)=>{
-              return modData[key];
-            });
-            updateData.push(updateData[0]);
-            updateData.splice(0,1); //idを最後に回す
-            conn.query('UPDATE '+target+' SET '+targets+' WHERE id = ?', updateData, function(err, result) {
-              if (err){ reject(err);}
-              else {
-                resolve(result);
-              }
-            });
-          }
+        getDataById(conn, target, id)
+        .then((result)=>{
+          const orgData = result;
+          var _targets = '';
+          Object.keys(orgData).forEach((key)=>{
+            if(key!=='id'){
+              _targets += key+'=?,';
+            }
+          });
+          const targets = _targets.substring(0,_targets.length-1);
+          const modData = Object.assign(orgData, data);
+          const updateData = Object.keys(modData).map((key)=>{
+            return modData[key];
+          });
+          updateData.push(updateData[0]);
+          updateData.splice(0,1); //idを最後に回す
+          conn.query('UPDATE '+target+' SET '+targets+' WHERE id = ?', updateData, function(err, result) {
+            if (err){ reject(err);}
+            else {
+              resolve(result);
+            }
+          });
+        }).catch((err)=>{
+          console.log(err);
+          reject(err);
+          //resolve({});
         });
-      }
-      else{
+      } else{
         resolve({});
       }
     });
@@ -214,7 +213,7 @@ pool.getConnection((err, conn)=>{
 
   /** worddata取得 */
   router.get('/getTimeline', function(req, res, next) {
-    const userid = req.query.id || 1;
+    const userid = req.headers.userid || 1;
     getDataById(conn, 'user', userid)
     .then((result)=>{
       if(!result.myWordIdlist || result.myWordIdlist.length < 0){
@@ -255,27 +254,49 @@ pool.getConnection((err, conn)=>{
   });
 
   /******** API ********/
-  router.post('/deleteItemId', function(req, res, next) {
-    const id = req.body.id;
-    const target = req.body.target;
-    if(id && target){
-      getDataById(conn, target, id)
-      .then((wordItem)=>{
-        if(!wordItem.activate){
-          return {};
-        }else{
-          wordItem.activate = 0;
-          return updateData(conn, target, wordItem);
-        }
-      }).then((result)=>{
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(result));
-      }).catch((err)=>{
-        console.log('err',err);
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(err));
+  router.post('/deleteWordId', function(req, res, next) {
+    const deleteId = req.body.id;
+    const userId = req.headers.userid;
+//    const target = req.body.target;
+    let deletedId = null;
+    if(deleteId && userId){
+      conn.beginTransaction((err)=> {
+        getDataById(conn, 'words', deleteId)
+        .then((item)=>{
+          if(!item.activate){
+            return {};
+          }else{
+            deletedId = item.id;
+            item.activate = 0;
+            return updateData(conn, 'words', item);
+          }
+        }).then((itemUpdateResult)=>{
+          return getDataById(conn, 'user', userId);
+        }).then((userInfo)=>{
+          const wordIds = userInfo.myWordIdlist.split(',');
+          const idx = wordIds.indexOf(deletedId+'');
+          if(idx>=0){
+            wordIds.splice(idx, 1);
+          }
+          userInfo.myWordIdlist = wordIds.join(',');
+          return updateData(conn, 'user', userInfo);
+        }).then((result)=>{
+          conn.commit((err)=> {
+            if (err) { conn.rollback(function() {throw err;}); }
+            else{
+              res.writeHead(200, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify(result));
+            }
+          });
+        }).catch((err)=>{
+          console.log('err',err);
+          conn.rollback(function() { throw err; }); 
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(err));
+        });
       });
     }else{
+      console.log('No data');
       res.writeHead(400, { 'Content-Type': 'application/json' });
       res.end('No data');
     }

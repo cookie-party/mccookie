@@ -27,6 +27,7 @@ class Main extends Component{
     super(props, state);
     const emitter = new EventEmitter2();
     this.userId = this.props.userId;
+    window.userId = this.userId; //TODO windowに入れない方がいいような気もする
 
     this.state = {
       emitter,
@@ -79,7 +80,7 @@ class Main extends Component{
           deleteDialogFlag: true,
           onDeleteItem:()=>{
             wordlist.splice(deleteIdx, 1);
-            post('deleteItemId', {
+            post('deleteWordId', {
               id: id,
               target: 'words'
             }).then(()=>{
