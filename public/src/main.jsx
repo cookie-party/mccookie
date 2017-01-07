@@ -8,7 +8,8 @@ injectTapEventPlugin();
 import IconButton from 'material-ui/IconButton';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
-import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
+//import FlatButton from 'material-ui/FlatButton';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import Paper from 'material-ui/Paper';
 
@@ -103,34 +104,38 @@ class Main extends Component{
 
   render() {
     const styles = {
+      column: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        height: '100%'
+      },
+      row: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '100%'
+      },
+      titlebar: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        width: '100%'
+      },
       main: {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-around',
         alignItems: 'center',
-      },
-      tableStyle1: {
-        border : '1px solid black',
-        borderCollapse: 'collapse',
-        borderColor: 'red',
-        height: '75px',
-        margin: '10 auto',
-        tableLayout: 'fixed',
-        width: '90%'
-      },
-      titleStyle: {
-        color: 'red',
-        fontSize: '30px'
-      },
-      tdStyle1: {
-        border : '1px solid orange',
+        padding: 50,
       },
       mainTable: {
-        border : '1px solid black',
-        borderColor: 'red',
-//        height: '450px',
+        border : '1px solid',
+        borderColor: '#e9d97f',
         margin: '10 auto',
-        tableLayout: 'fixed',
         width: '90%',
         display: 'flex',
         flexDirection: 'column',
@@ -153,10 +158,40 @@ class Main extends Component{
         width: 700,
 //        height: '600',
       },
+      tableStyle1: {
+        border : '1px solid black',
+        borderCollapse: 'collapse',
+        borderColor: 'red',
+        height: '75px',
+        margin: '10 auto',
+        tableLayout: 'fixed',
+        width: '90%'
+      },
+      tdStyle1: {
+        border : '1px solid orange',
+      },
     };
 
-    let page = <div/>;
+    const titleBar = (
+      <div style={styles.row}>
+        <div style={{width: 200}}>
+          <img src='../img/title_logo.png' style={{cursor: 'pointer'}} width='100%' onTouchTap={this.handleTop.bind(this)}/>
+        </div>
+        <div>
+          <SearchBox {...this.state}/>
+        </div>
+        <div style={{width: 250, display: 'flex'}}>
+          <div style={{margin: 10}}>
+            <RaisedButton label="MyProfile" onClick={this.handleMyprof.bind(this)} />
+          </div>
+          <div style={{margin: 10}}>
+            <RaisedButton label="Logout" onClick={this.handleLogout.bind(this)} />
+          </div>
+        </div>
+      </div>
+    );
 
+    let page = <div/>;
     if(this.state.contents === 0){
       page = (
         <div style={styles.mainTable}>
@@ -178,27 +213,15 @@ class Main extends Component{
 
     return (
       <div>
-        <div style={styles.main}>
-          <table style={styles.tableStyle1}>
-          <tbody>
-            <tr>
-              <td style = {styles.tdStyle1}>
-                <img src='../img/title_logo.png' style={{cursor: 'pointer'}} width='100%' onTouchTap={this.handleTop.bind(this)}/>
-              </td>
-              <td style = {styles.tdStyle1}>
-                <SearchBox {...this.state}/>
-              </td>
-              <td style = {styles.tdStyle1}>
-                <FlatButton label="MyProfile" onClick={this.handleMyprof.bind(this)} />
-              </td>
-              <td style = {styles.tdStyle1}>
-                <FlatButton label="Logout" onClick={this.handleLogout.bind(this)} />
-              </td>
-            </tr>
-          </tbody>
-          </table>
+        <div style={styles.column}>
 
-          {page}
+          <Paper zDepth={0} style={styles.titlebar}>
+            {titleBar}
+          </Paper>
+
+          <div style={styles.main}>
+            {page}
+          </div>
 
         </div>
       </div>
