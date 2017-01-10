@@ -21,6 +21,8 @@ import Timeline from './timeline';
 import SearchBox from './components/SearchBox';
 import MyProfile from './myprof';
 import DialogBox from './components/DialogBox';
+import MyList from './mylist';
+import NewList from './newlist';
 
 class Main extends Component{
   constructor(props, state){
@@ -66,6 +68,15 @@ class Main extends Component{
       this.setState({contents: 1});
     }).on('cookieRegisterMyprof', (searchWord)=> {
       //register
+    }).on('cookieListStart', (id)=>{
+      query('getWordList',id)
+      .then((result)=>{
+        this.setState({contents: 0, wordList: result});
+      }).catch((err)=>{
+        console.log(err);
+      });
+    }).on('cookieNewList', ()=>{
+      this.setState({contents: 3});
     }).on('cookieItemDelete', (id)=> {
       //delete
       const wordlist = this.state.wordList;
@@ -119,10 +130,33 @@ class Main extends Component{
   }
 
   handleTop() {
-    this.setState({contents: 0});
+    //ユーザ情報取得
+    getUserData(this.userId)
+    .then((results)=>{
+      this.setState({
+        userInfo: results.userInfo
+      });
+      return query('getTimeline', this.userId);
+    }).then((words)=>{
+      if(words.length > 0){
+        const wordList = this.state.wordList;
+        words.map((r)=>{
+          wordList.push({id: r.id, key: r.keyText, value: r.valueText, tags: r.tagList, updateDate: r.updateDate});
+        });
+        this.setState({
+          wordList: wordList,
+          contents: 0
+        });
+      }
+    }).catch((err)=>{
+      console.log('getUserData',err);
+    });
   }
   handleMyprof() {
     this.setState({contents: 1});
+  }
+  handleMyFolder() {
+    this.setState({contents: 2});
   }
 
   handleLogout() {
@@ -213,13 +247,8 @@ class Main extends Component{
         </div>
         <div style={{width: 150, display: 'flex'}}>
           <div style={{margin: 10}}>
-            <IconMenu
-            iconButtonElement={<IconButton><FolderIcon /></IconButton>}
-            anchorOrigin={{horizontal: 'left', vertical: 'top'}}
-            targetOrigin={{horizontal: 'left', vertical: 'top'}}
-            >
-              <MenuItem primaryText='お気に入り' onClick={this.handleMyprof.bind(this)} ></MenuItem>
-            </IconMenu>
+            <FolderIcon style={{cursor: 'pointer', display: 'flex'}}
+             onTouchTap={this.handleMyFolder.bind(this)}/>
           </div>
           <div style={{margin: 10}}>
             <IconMenu
@@ -252,7 +281,10 @@ class Main extends Component{
       page = <MyProfile {...this.state}/>;
     }
     else if(this.state.contents === 2){
-      page = <div/>;
+      page = <MyList {...this.state}/>;
+    }
+    else if(this.state.contents === 3){
+      page = <NewList {...this.state} />;
     }
 
     return (

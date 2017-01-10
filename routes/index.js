@@ -4,6 +4,7 @@ const pool = require('./dbConn');
 const tables = ['user','tag','wordbook','words'];
 
 //mysql
+//サブクエリも使ったらいいかも
 pool.getConnection((err, conn)=>{
   if(err){
     //console.log(err);
@@ -220,6 +221,48 @@ pool.getConnection((err, conn)=>{
         return [];
       }else{
         const getWordsQuery = result.myWordIdlist.split(',').map((wordid)=>{
+          return getDataById(conn, 'words', wordid);
+        });
+        return Promise.all(getWordsQuery);
+      }
+    }).then((words)=>{
+      const setTagList = (word)=>{
+        return new Promise((resolve, reject)=>{
+          if(!word.tags || word.tags.length === 0 ){ resolve(word); }
+          else {
+            const getTagsQuery = word.tags.split(',').map((tagid)=>{
+              return getDataById(conn, 'tag', tagid);
+            });
+            Promise.all(getTagsQuery).then((tagList)=>{
+              word.tagList = tagList;
+              resolve(word);
+            }).catch((err)=>{throw err;});
+          }
+        });
+      };
+      const setTagLists = words.map((word)=>{
+        return setTagList(word);
+      });
+      return Promise.all(setTagLists);
+    }).then((settedTagListWordList)=>{
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(settedTagListWordList));
+    }).catch((err)=>{
+      console.log('err',err);
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(err));
+    });
+  });
+
+  /** worddata取得 from wordbook */
+  router.get('/getWordList', function(req, res, next) {
+    const bookid = req.query.id || 1;
+    getDataById(conn, 'wordbook', bookid)
+    .then((result)=>{
+      if(!result.wordlist || result.wordlist.length < 0){
+        return [];
+      }else{
+        const getWordsQuery = result.wordlist.split(',').map((wordid)=>{
           return getDataById(conn, 'words', wordid);
         });
         return Promise.all(getWordsQuery);
