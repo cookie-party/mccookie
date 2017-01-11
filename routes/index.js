@@ -301,7 +301,7 @@ pool.getConnection((err, conn)=>{
     const deleteId = req.body.id;
     const userId = req.headers.userid;
 //    const target = req.body.target;
-    let deletedId = null;
+    var deletedId = null;
     if(deleteId && userId){
       conn.beginTransaction((err)=> {
         getDataById(conn, 'words', deleteId)
@@ -391,9 +391,9 @@ pool.getConnection((err, conn)=>{
               conn.query('SELECT * FROM user WHERE id=?', id, (err, results)=>{
                 if(err) { throw err; }
                 else {
-                  let insertId = result.insertId;
-                  let userInfo = results[0];
-                  let myWordIdlist = userInfo.myWordIdlist;
+                  var insertId = result.insertId;
+                  var userInfo = results[0];
+                  var myWordIdlist = userInfo.myWordIdlist;
                   myWordIdlist = myWordIdlist.length === 0 ? insertId : myWordIdlist + ',' + insertId;
                   conn.query('UPDATE user SET myWordIdlist = ? WHERE id = ?', 
                   [myWordIdlist, 1], function(err, result) {
@@ -451,7 +451,7 @@ pool.getConnection((err, conn)=>{
   /* GET Dictionary. */
   router.get('/ejdic', function(req, res, next) {
     const dictionary = require('./ref/ejdic');
-    let meaning = {result: false, meaning: 'undefined'};
+    var meaning = {result: false, meaning: 'undefined'};
     dictionary.forEach((item)=>{
       if(item.word === req.query.id){
         meaning = {result: true, meaning: item.meaning};
