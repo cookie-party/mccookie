@@ -7,21 +7,9 @@ const tables = ['user','tag','wordbook','words'];
 //サブクエリも使ったらいいかも
 pool.getConnection((err, conn)=>{
   if(err){
-    //console.log(err);
+    console.log(err);
     //return;
   }
-
-  /*
-  //テスト接続
-  const sql = 'SELECT name FROM user WHERE id=?';
-  conn.query(sql, 1, (err, results)=>{
-    if(err) {
-      console.log(err);
-      return;
-    }
-    console.log(results);
-  });
-  */
 
   //データ取得
   const getDataById = (conn, target, id)=>{
@@ -77,13 +65,13 @@ pool.getConnection((err, conn)=>{
         conn.beginTransaction(function(err) {
           if (err) { throw err; }
           conn.query('INSERT INTO '+target+' SET ?', data, function(err, result) {
-            if (err){  conn.rollback(function() { throw err; });}
+            if (err){ conn.rollback(function() { throw err; });}
             else {
               //コミットする
-              conn.commit(function(err) {
+              conn.commit((err)=> {
                 if (err) {  conn.rollback(function() { throw err; }); }
-                console.log('success!');
-                resolve();
+                console.log('success!', result);
+                resolve(result);
               });
             }
           });
@@ -422,6 +410,112 @@ pool.getConnection((err, conn)=>{
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end('{}');
     }
+  });
+
+  /** booklistを追加 */
+  router.post('/newbook', function(req, res, next) {
+    const id = 1; //TODO request-header にユーザidを入れたい
+    const userId = req.headers.userid;
+    const bookname = req.body.name;
+    let insertId = -1;
+    if(conn){
+      conn.beginTransaction((err)=> {
+        if (err) { throw err; }
+        insertData(conn, 'wordbook', {
+          name: bookname,
+          wordlist: '',
+          categoryId: '',
+          createUserId: userId,
+          activate: 1
+        })
+        .then((result)=>{
+          insertId = result.insertId;
+          return getDataById(conn, 'user', userId);
+        }).then((userInfo)=>{
+          const bookIds = userInfo.favoriteBookIdList.split(',');
+          if(insertId>=0){
+            bookIds.push(insertId);
+            return updateData(conn, 'user', {id: userId, favoriteBookIdList:  bookIds.join(',')});
+          }else{
+            return [];
+          }
+        }).then((result)=>{
+          conn.commit(function(err) {
+            if (err) { conn.rollback(function() {throw err;}); }
+            console.log('success!',result);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(result));
+          });
+        }).catch((err)=>{
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(err));
+        });
+      });
+    }else{
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end('{}');
+    }
+  });
+
+  /** booklistに追加 */
+  router.post('/addmylist', function(req, res, next) {
+    const id = 1; //TODO request-header にユーザidを入れたい
+    const userId = req.headers.userid;
+    const cardid = req.body.cardid;
+    const bookid = req.body.bookid;
+    if(conn){
+      conn.beginTransaction((err)=> {
+        if (err) { throw err; }
+        getDataById(conn, 'wordbook', bookid)
+        .then((wb)=>{
+          if(wb.wordlist){
+            const wordlist = wb.wordlist.split(',');
+            if(wordlist.length <= 0 || wordlist.indexOf(cardid+'')<0){
+              wordlist.push(cardid);
+              const wordlistStr = wordlist.join(',');
+              return updateData(conn, 'wordbook', {id: bookid, wordlist: wordlistStr});
+            }
+          }
+          return [];
+        }).then((result)=>{
+          conn.commit(function(err) {
+            if (err) { conn.rollback(function() {throw err;}); }
+            console.log('success!',result);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(result));
+          });
+        }).catch((err)=>{
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(err));
+        });
+      });
+    }else{
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end('{}');
+    }
+  });
+
+  router.get('/mybooklist', function(req, res, next) {
+    const id = req.query.id || 1;
+    getDataById(conn, 'user', id)
+    .then((result)=>{
+      if(!result.favoriteBookIdList){
+        return [];
+      }else{
+        const getBookQuery = result.favoriteBookIdList.split(',').map((id)=>{
+          return getDataById(conn, 'wordbook', id);
+        });
+        return Promise.all(getBookQuery);
+      }
+    }).then((items)=>{
+      const names = items.map((item)=>{return {id: item.id, name: item.name};});
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(names));
+    }).catch((err)=>{
+      console.log('err',err);
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(err));
+    });
   });
 
   /** System data */

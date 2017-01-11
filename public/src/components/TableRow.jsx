@@ -19,6 +19,7 @@ export class TableRow extends Component {
 
   onAddMyList() {
     console.log('onAddMyList');
+    this.props.emitter.emit('cookieItemToBook', this.props.item.id);
   }
 
   onLike() {

@@ -21,6 +21,7 @@ import Timeline from './timeline';
 import SearchBox from './components/SearchBox';
 import MyProfile from './myprof';
 import DialogBox from './components/DialogBox';
+import AddMylistDialog from './components/AddMylistDialog';
 import MyList from './mylist';
 import NewList from './newlist';
 
@@ -45,7 +46,9 @@ class Main extends Component{
       userId: this.props.userId,
       userInfo: {},
       onDeleteItem: ()=>{},
+      onAddMylist: ()=>{},
       deleteDialogFlag: false,
+      addmylistDialogFlag: false,
     };
 
     this.state.emitter.on('cookieRegister', (kv)=>{
@@ -77,6 +80,20 @@ class Main extends Component{
       });
     }).on('cookieNewList', ()=>{
       this.setState({contents: 3});
+    }).on('cookieItemToBook', (cardid)=> {
+      this.setState({
+        addmylistDialogFlag: true,
+        onAddMylist:(bookid)=>{
+          post('addMyList', {
+            cardid: cardid,
+            bookid: bookid,
+          }).then(()=>{
+            this.setState({addmylistDialogFlag: false});
+          }).catch(()=>{
+            alert('Miss Delete');
+          });
+        }
+      });
     }).on('cookieItemDelete', (id)=> {
       //delete
       const wordlist = this.state.wordList;
@@ -307,6 +324,17 @@ class Main extends Component{
               onOK={this.state.onDeleteItem.bind(this)}
               onCancel={()=>{
                 this.setState({deleteDialogFlag: false});
+              }}
+            />
+          </div>
+          <div>
+            <AddMylistDialog
+              title={'Add Mylist'}
+              message={'単語を追加しますか？'}
+              flag={this.state.addmylistDialogFlag}
+              onOK={this.state.onAddMylist.bind(this)}
+              onCancel={()=>{
+                this.setState({addmylistDialogFlag: false});
               }}
             />
           </div>

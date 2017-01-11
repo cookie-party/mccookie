@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import {query} from './util/agent';
+import {query, post} from './util/agent';
 
 export default class NewList extends Component {
   constructor(props, state){
@@ -16,14 +16,7 @@ export default class NewList extends Component {
   }
 
   onClickRegister() {
-    const newlist = {
-      name: this.state.name,
-      wordlist: '',
-      categoryId: '',
-      createUserId: this.props.userId,
-      activate: 1
-    };
-    query('wordbook', newlist)
+    post('newbook', {name: this.state.name})
     .then((result)=>{
       console.log(result);
     }).catch((err)=>{
