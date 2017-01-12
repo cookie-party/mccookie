@@ -5,6 +5,7 @@ import Subheader from 'material-ui/Subheader';
 import StarBorder from 'material-ui/svg-icons/toggle/star-border';
 import AddIcon from 'material-ui/svg-icons/action/note-add';
 import Paper from 'material-ui/Paper';
+import CircularProgress from 'material-ui/CircularProgress';
 
 import {query} from './util/agent';
 
@@ -32,7 +33,8 @@ export default class MyList extends Component {
           author: 'kumi',
           atePercentage: 50,
         }
-      ]
+      ],
+      loading: true
     };
   }
 
@@ -49,6 +51,22 @@ export default class MyList extends Component {
   }
 
   componentDidMount(){
+    //get
+    query('stocklist', this.props.userId)
+    .then((result)=>{
+      console.log(result);
+      const tilesData = result.map((item, i)=>{
+        return {
+          key: i,
+          title: item.name,
+          author: item.user
+        };
+      });
+      this.setState({loading: true, tilesData });
+    }).catch((err)=>{
+      console.log(err);
+      this.setState({loading: true });
+    });
   }
 
   render(){
@@ -110,8 +128,7 @@ export default class MyList extends Component {
       </GridTile>
     ));
 
-    return (
-      <div style={styles.root}>
+    const contentsView = this.state.loading ? 
         <GridList
           cellHeight={200}
           style={styles.gridList}
@@ -119,6 +136,12 @@ export default class MyList extends Component {
           <Subheader>MyList</Subheader>
           {images}
         </GridList>
+      : 
+        <CircularProgress />;
+
+    return (
+      <div style={styles.root}>
+        {contentsView}
       </div>
     );
   }

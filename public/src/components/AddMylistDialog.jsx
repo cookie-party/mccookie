@@ -16,7 +16,7 @@ export default class AddMylistDialog extends Component{
   }
 
   componentDidMount() {
-    query('mybooklist',window.userId)
+    query('mybooklist',this.props.userId)
     .then((result)=>{
       const booklist = result;
       this.setState({booklist: booklist});

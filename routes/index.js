@@ -495,6 +495,7 @@ pool.getConnection((err, conn)=>{
     }
   });
 
+  //自分が作ったリスト
   router.get('/mybooklist', function(req, res, next) {
     const id = req.query.id || 1;
     getDataById(conn, 'user', id)
@@ -511,6 +512,41 @@ pool.getConnection((err, conn)=>{
       const names = items.map((item)=>{return {id: item.id, name: item.name};});
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(names));
+    }).catch((err)=>{
+      console.log('err',err);
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(err));
+    });
+  });
+
+  //自分がストックしたリスト
+  router.get('/stocklist', function(req, res, next) {
+    const id = req.query.id || 1;
+    const results = [];
+    getDataById(conn, 'user', id)
+    .then((result)=>{
+      if(!result.favoriteBookIdList){
+        return [];
+      }else{
+        const getBookQuery = result.favoriteBookIdList.split(',').map((id)=>{
+          return getDataById(conn, 'wordbook', id);
+        });
+        return Promise.all(getBookQuery);
+      }
+    }).then((items)=>{
+      if(!items){
+        return [];
+      }else{
+        items.forEach((item)=>{results.push({id: item.id, name: item.name});});
+        const getUserNames = items.map((item)=>{
+          return getDataById(conn, 'user', item.createUserId);
+        });
+        return Promise.all(getUserNames);
+      }
+    }).then((uinfo)=>{
+      uinfo.forEach((user,id)=>{results[id].user = user.name;});
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(results));
     }).catch((err)=>{
       console.log('err',err);
       res.writeHead(400, { 'Content-Type': 'application/json' });
