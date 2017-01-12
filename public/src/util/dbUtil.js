@@ -1,5 +1,6 @@
 import {query} from './agent';
 
+/*
 export function getUserData(uid) {
   return new Promise((resolve, reject)=>{
     const results = {
@@ -17,6 +18,7 @@ export function getUserData(uid) {
     });
   });
 }
+*/
 
 export function getTagList() {
   return new Promise((resolve, reject)=>{
