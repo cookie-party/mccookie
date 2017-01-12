@@ -417,7 +417,7 @@ pool.getConnection((err, conn)=>{
     const id = 1; //TODO request-header にユーザidを入れたい
     const userId = req.headers.userid;
     const bookname = req.body.name;
-    let insertId = -1;
+    var insertId = -1;
     if(conn){
       conn.beginTransaction((err)=> {
         if (err) { throw err; }
