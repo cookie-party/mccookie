@@ -54,7 +54,6 @@ export default class MyList extends Component {
     //get
     query('stocklist', this.props.userId)
     .then((result)=>{
-      console.log(result);
       const tilesData = result.map((item, i)=>{
         return {
           key: i,

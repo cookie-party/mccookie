@@ -12,6 +12,7 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import FaceIcon from 'material-ui/svg-icons/action/face';
 import FolderIcon from 'material-ui/svg-icons/file/folder';
 import Paper from 'material-ui/Paper';
+import CircularProgress from 'material-ui/CircularProgress';
 
 import {getUserData} from './util/dbUtil';
 import {query, post} from './util/agent';
@@ -34,7 +35,7 @@ class Main extends Component{
 
     this.state = {
       emitter,
-      contents: 0,
+      contents: -1,
       wordList: [{
         id: 0,
         key: '覚えたい単語',
@@ -67,14 +68,14 @@ class Main extends Component{
       });
     }).on('cookieSearch', (searchWord)=> {
       this.setState({searchWord});
-    }).on('cookieEditMyprof', (searchWord)=> {
+    }).on('cookieEditMyprof', ()=> {
       this.setState({contents: 1});
-    }).on('cookieRegisterMyprof', (searchWord)=> {
+    }).on('cookieRegisterMyprof', ()=> {
       //register
     }).on('cookieListStart', (id)=>{
       query('getWordList',id)
-      .then((result)=>{
-        this.setState({contents: 0, wordList: result});
+      .then((wordList)=>{
+        this.setState({contents: 0, wordList});
       }).catch((err)=>{
         console.log(err);
       });
@@ -125,40 +126,50 @@ class Main extends Component{
 
   componentDidMount() {
     //ユーザ情報取得
-    getUserData(this.userId)
-    .then((results)=>{
-      this.setState({
-        userInfo: results.userInfo
-      });
-      return query('getTimeline', this.userId);
+    this.setState({contents: -1});
+    let userInfo = {};
+    query('user', this.state.userId)
+    .then((retUserInfo)=>{
+      userInfo = retUserInfo;
+      return query('getTimeline', this.state.userId);
     }).then((words)=>{
       if(words.length > 0){
         const wordList = this.state.wordList;
         words.map((r)=>{
-          wordList.push({id: r.id, key: r.keyText, value: r.valueText, tags: r.tagList, updateDate: r.updateDate});
+          wordList.push({
+            id: r.id, 
+            key: r.keyText, 
+            value: r.valueText, 
+            tags: r.tagList, 
+            updateDate: r.updateDate
+          });
         });
         this.setState({
-          wordList: wordList
+          userInfo,
+          wordList,
+          contents: 0
         });
       }
     }).catch((err)=>{
-      console.log('getUserData',err);
+      console.log('main',err);
     });
   }
 
   handleTop() {
     //ユーザ情報取得
-    getUserData(this.userId)
-    .then((results)=>{
-      this.setState({
-        userInfo: results.userInfo
-      });
-      return query('getTimeline', this.userId);
-    }).then((words)=>{
+    this.setState({contents: -1});
+    query('getTimeline', this.state.userId)
+    .then((words)=>{
       if(words.length > 0){
         const wordList = this.state.wordList;
         words.map((r)=>{
-          wordList.push({id: r.id, key: r.keyText, value: r.valueText, tags: r.tagList, updateDate: r.updateDate});
+          wordList.push({
+            id: r.id, 
+            key: r.keyText, 
+            value: r.valueText, 
+            tags: r.tagList, 
+            updateDate: r.updateDate
+          });
         });
         this.setState({
           wordList: wordList,
@@ -166,7 +177,7 @@ class Main extends Component{
         });
       }
     }).catch((err)=>{
-      console.log('getUserData',err);
+      console.log('main',err);
     });
   }
   handleMyprof() {
@@ -281,7 +292,7 @@ class Main extends Component{
       </div>
     );
 
-    let page = <div/>;
+    let page = <CircularProgress/>;
     if(this.state.contents === 0){
       page = (
         <div style={styles.mainTable}>
@@ -304,6 +315,33 @@ class Main extends Component{
       page = <NewList {...this.state} />;
     }
 
+    const dialogs = (
+      <div>
+        <div>
+          <DialogBox
+            title={'Delete Item'}
+            message={'単語を削除しますか？'}
+            flag={this.state.deleteDialogFlag}
+            onOK={this.state.onDeleteItem.bind(this)}
+            onCancel={()=>{
+              this.setState({deleteDialogFlag: false});
+            }}
+          />
+        </div>
+        <div>
+          <AddMylistDialog
+            title={'Add Mylist'}
+            message={'単語を追加しますか？'}
+            flag={this.state.addmylistDialogFlag}
+            onOK={this.state.onAddMylist.bind(this)}
+            onCancel={()=>{
+              this.setState({addmylistDialogFlag: false});
+            }}
+          />
+        </div>
+      </div>
+    );
+
     return (
       <div>
         <div style={styles.column}>
@@ -317,26 +355,7 @@ class Main extends Component{
           </div>
 
           <div>
-            <DialogBox
-              title={'Delete Item'}
-              message={'単語を削除しますか？'}
-              flag={this.state.deleteDialogFlag}
-              onOK={this.state.onDeleteItem.bind(this)}
-              onCancel={()=>{
-                this.setState({deleteDialogFlag: false});
-              }}
-            />
-          </div>
-          <div>
-            <AddMylistDialog
-              title={'Add Mylist'}
-              message={'単語を追加しますか？'}
-              flag={this.state.addmylistDialogFlag}
-              onOK={this.state.onAddMylist.bind(this)}
-              onCancel={()=>{
-                this.setState({addmylistDialogFlag: false});
-              }}
-            />
+            {dialogs}
           </div>
 
         </div>
