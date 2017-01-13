@@ -13,7 +13,7 @@ const renderFullPage = function(config) {
           <link rel="stylesheet" type="text/css" href="./stylesheets/style.css">
       </head>
 
-      <body bgcolor='#FEFFEA'>
+      <body>
       
       <div id = "root"></div>
 

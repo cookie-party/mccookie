@@ -1,75 +1,44 @@
 import React, {Component} from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import Paper from 'material-ui/Paper';
-import IconCached from 'material-ui/svg-icons/action/cached';
 
-require('velocity-animate');
-require('velocity-animate/velocity.ui');
-
-import {VelocityComponent, velocityHelpers} from 'velocity-react';
-
-const FlipAnimations = {
-  down: velocityHelpers.registerEffect({
-    defaultDuration: 1100,
-    calls: [
-      [{
-        transformPerspective: [ 800, 800 ],
-        transformOriginX: [ '50%', '50%' ],
-        transformOriginY: [ 0, 0 ],
-        rotateY: [0, 'spring'],
-        backgroundColor: ['#3f83b7', '#5797c0'],
-      }, 1, {
-        delay: 100,
-        easing: 'ease-in',
-      }]
-    ],
-  }),
-
-  // Flips the box up nearly 180°.
-  up: velocityHelpers.registerEffect({
-    defaultDuration: 200,
-    calls: [
-      [{
-        transformPerspective: [ 800, 800 ],
-        transformOriginX: [ '50%', '50%' ],
-        transformOriginY: [ 0, 0 ],
-        rotateY: 180,
-        backgroundColor: '#5797c0',
-      }]
-    ],
-  }),
-};
+import StarIcon from 'material-ui/svg-icons/toggle/star';
+import LibraryAddIcon from 'material-ui/svg-icons/av/library-add';
+import ReplyIcon from 'material-ui/svg-icons/content/reply';
+import DeleteIcon from 'material-ui/svg-icons/action/delete';
+import IconView from './IconView';
+import WordPaper from './WordPaper';
 
 export class TableRow extends Component { 
   constructor(props, state){
     super(props,state);
-    this.state = {
-      keytouch: false,
-      hovering: false,
-    };
   }
 
-  handleClicked(){
-    //TODO detailを出す
-    this.setState({keytouch: !this.state.keytouch});
+  onReply() {
+    console.log('onReply');
   }
 
-  whenMouseEntered () {
-    this.setState({ hovering: true });
+  onAddMyList() {
+    console.log('onAddMyList');
+    this.props.emitter.emit('cookieItemToBook', this.props.item.id);
   }
 
-  whenMouseLeft() {
-    this.setState({ hovering: false });
+  onLike() {
+    console.log('onLike');
+  }
+
+  onDelete() {
+    console.log('onDelete');
+    this.props.emitter.emit('cookieItemDelete', this.props.item.id);
   }
 
   render() {
     const styles = {
-      top: {
+      row: {
         display: 'flex',
         flexFlow: 'row wrap',
         alignItems: 'flexStart',
       },
-      main: {
+      column: {
         display: 'flex',
         flexFlow: 'column wrap',
         alignItems: 'flexStart',
@@ -80,8 +49,8 @@ export class TableRow extends Component {
         alignItems: 'flexStart',
       },
       icon: {
-        width: '50px',
-        height: '50px'
+        width: 50,
+        height: 50,
       },
       userid: {
         width: '50px',
@@ -92,20 +61,16 @@ export class TableRow extends Component {
         fontSize: '12pt',
         fontWeight: 'bold',
       },
-      value: {
-        cursor: 'pointer',
-        fontSize: '20px'
-      },
       time: {
         width: '30px',
         fontSize: '5pt'
       },
-      itemView: {
-        display: 'flex',
-        flexFlow: 'row wrap',
-        alignItems: 'center',
-        animation: 'roll 2s linear infinite'
-      },
+      smallIcon: {
+        width: 20,
+        height: 20,
+        fill: '#42AFE3', //d0d8e5
+        cursor: 'pointer',
+      }, 
     };
 
     const item = this.props.item;
@@ -113,48 +78,33 @@ export class TableRow extends Component {
     const icon = item.icon || '../../img/satomi.jpg';
     const username = item.userid || 'satomi';
     const userid = item.username || '@satomi';
-    const key = item.key || 'nokey';
-    const value = item.value || 'novalue';
+//    const key = item.key || 'nokey';
+//    const value = item.value || 'novalue';
     let time = 0;
     const now = new Date().getTime;
     if(item.time){
       time = now - item.time;
     }
 
-    let itemView = '';
-    if(this.state.hovering){ 
-      itemView = (
-        <div style={{margin: 20, transform: 'rotateY(180deg)'}}>
-          {value}
+    const iconlist = (
+      <div style={styles.row}>
+        <div style={{margin: 5}}>
+          <IconView icon={ReplyIcon} style={styles.smallIcon} onClick={this.onReply.bind(this)}/>
         </div>
-      ); 
-    }
-    else {
-      itemView = (
-        <ReactCSSTransitionGroup
-          transitionName="rotateString"
-          transitionAppear={true}
-          transitionAppearTimeout={500}
-          transitionEnter={false}
-          transitionLeave={false}
-          >
-          <div style={{margin: 20}}>
-            {key}
-          </div>
-        </ReactCSSTransitionGroup>
-      ); 
-    }
-
-    let flipAnimation;
-    if (this.state.hovering) {
-      flipAnimation = FlipAnimations.up;
-    } else {
-      flipAnimation = FlipAnimations.down;
-    }
-
+        <div style={{margin: 5}}>
+          <IconView icon={LibraryAddIcon} style={styles.smallIcon} onClick={this.onAddMyList.bind(this)}/>
+        </div>
+        <div style={{margin: 5}}>
+          <IconView icon={StarIcon} style={styles.smallIcon} onClick={this.onLike.bind(this)}/>
+        </div>
+        <div style={{margin: 5}}>
+          <IconView icon={DeleteIcon} style={styles.smallIcon} onClick={this.onDelete.bind(this)}/>
+        </div>
+      </div>
+    );
 
     const content = (
-      <div style={styles.main}>
+      <div style={styles.column}>
         <div style={styles.header}>
           <div style={styles.username}>
             {username}
@@ -166,17 +116,10 @@ export class TableRow extends Component {
             {time} ms
           </div>
         </div>
-        <VelocityComponent animation={flipAnimation}>
-        <div
-          onMouseEnter={this.whenMouseEntered.bind(this)}
-          onMouseLeave={this.whenMouseLeft.bind(this)}>
-          <Paper style={styles.value} zDepth={2} onTouchTap={this.handleClicked.bind(this)}>
-            <div style={styles.itemView}>
-                  {itemView}
-            </div>
-          </Paper>
+        <WordPaper {...this.props}/>
+        <div style={styles.row}>
+          {iconlist}
         </div>
-        </VelocityComponent>
       </div>
     );
 
@@ -190,14 +133,14 @@ export class TableRow extends Component {
           transitionLeave={true}
           transitionLeaveTimeout={500}
           >
-      <div style={styles.top}>
+        <div style={styles.row}>
           <div style={{margin: 10}}>
             <img src={icon} style={styles.icon}/>
           </div>
           <div>
             {content}
           </div>
-      </div>
+        </div>
       </ReactCSSTransitionGroup>
     );
   }

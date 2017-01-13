@@ -1,6 +1,6 @@
 body {
-  padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-color: #fff5ea;
 }
 
 a {
@@ -26,11 +26,18 @@ a {
   }
 }
 
-.rotateString-appear {
+.opacity-appear {
   opacity: 0;
   &#{&}-active {
-    opacity: 0;
-//    transform: rotateY(180deg);
-//    transition-delay: .5s;
+    opacity: 1;
+    transition: opacity 1s ease-out;
   }
 }
+.opacity-enter {
+  opacity: 0;
+  &#{&}-active {
+    opacity: 1;
+    transition: opacity 1s ease-out;
+  }
+}
+

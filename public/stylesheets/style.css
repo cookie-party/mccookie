@@ -1,6 +1,6 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif; }
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-color: #fff5ea; }
 
 a {
   color: #00B7FF; }
@@ -21,7 +21,14 @@ a {
     opacity: .01;
     transform: translateY(5%) scale(0.98, 0.98); }
 
-.rotateString-appear {
+.opacity-appear {
   opacity: 0; }
-  .rotateString-appear.rotateString-appear-active {
-    opacity: 0; }
+  .opacity-appear.opacity-appear-active {
+    opacity: 1;
+    transition: opacity 1s ease-out; }
+
+.opacity-enter {
+  opacity: 0; }
+  .opacity-enter.opacity-enter-active {
+    opacity: 1;
+    transition: opacity 1s ease-out; }

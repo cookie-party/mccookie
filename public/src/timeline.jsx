@@ -16,14 +16,14 @@ export default class Timeline extends Component {
         alignItems: 'stretch',
       },
       item: {
-        width: '450px'
+//        width: 700
       }
     };
 
     const kvList = this.props.wordList.map((kv, i)=>{
       return (
         <div key={i} style={styles.item}>
-          <TableRow item={kv}/>
+          <TableRow item={kv} emitter={this.props.emitter}/>
         </div>
       );
     });
