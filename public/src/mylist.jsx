@@ -4,12 +4,12 @@ import IconButton from 'material-ui/IconButton';
 import Subheader from 'material-ui/Subheader';
 import StarBorder from 'material-ui/svg-icons/toggle/star-border';
 import AddIcon from 'material-ui/svg-icons/action/note-add';
-import {Pie} from 'react-chartjs-2';
+import Paper from 'material-ui/Paper';
+import CircularProgress from 'material-ui/CircularProgress';
 
-import {getBookList} from './dbUtil';
-import {query} from './agent';
+import {query} from './util/agent';
 
-class MyList extends Component {
+export default class MyList extends Component {
   constructor(props, state){
     super(props, state);
 
@@ -33,7 +33,8 @@ class MyList extends Component {
           author: 'kumi',
           atePercentage: 50,
         }
-      ]
+      ],
+      loading: true
     };
   }
 
@@ -42,28 +43,28 @@ class MyList extends Component {
   //-1 => mylist新規追加
   onClick(id) {
     if(id>0){
-      this.props.emitter.emit('cookieStart', id);
+      this.props.emitter.emit('cookieListStart', id);
     }
     else if(id === -1){
-      this.props.emitter.emit('cookieRegister');
+      this.props.emitter.emit('cookieNewList');
     }
   }
 
   componentDidMount(){
-    getBookList(this.props.userId).then((results)=>{
-      //console.log('getBookList',results);
-      if(results.length>0){
-        this.setState({
-          tilesData: results.map((res)=>{
-            return {
-              key: res.id,
-              title: res.name,
-              author: res.createUserId, //TODO ユーザ名にする
-              atePercentage: 20,
-            };
-          })
-        });
-      }
+    //get
+    query('stocklist', this.props.userId)
+    .then((result)=>{
+      const tilesData = result.map((item, i)=>{
+        return {
+          key: i,
+          title: item.name,
+          author: item.user
+        };
+      });
+      this.setState({loading: true, tilesData });
+    }).catch((err)=>{
+      console.log(err);
+      this.setState({loading: true });
     });
   }
 
@@ -94,26 +95,6 @@ class MyList extends Component {
       }, 
     };
 
-    const _calcData = (atePercentage) => {
-      return {
-        labels: [
-          'Ate',
-          'Ever'
-        ],
-        datasets: [{
-          data: [atePercentage, 100-atePercentage],
-          backgroundColor: [
-            '#FF6384',
-            '#36A2EB',
-          ],
-          hoverBackgroundColor: [
-            '#FF6384',
-            '#36A2EB',
-          ]
-        }]
-      };
-    };
-  
     const images = this.state.tilesData.map((tile) => (
       <GridTile
         key={tile.key}
@@ -123,7 +104,9 @@ class MyList extends Component {
         onTouchTap={this.onClick.bind(this, tile.key)}
       >
         <div style={styles.tile}>
-          <Pie data={_calcData(tile.atePercentage)} />
+          <Paper zDepth={1}>
+            {tile.title}
+          </Paper>
         </div>
       </GridTile>
     ));
@@ -137,13 +120,14 @@ class MyList extends Component {
         onTouchTap={this.onClick.bind(this, -1)}
       >
         <div style={styles.tile}>
-          <AddIcon style={styles.mediumIcon}/>
+          <Paper zDepth={1}>
+            <AddIcon style={styles.mediumIcon}/>
+          </Paper>
         </div>
       </GridTile>
     ));
 
-    return (
-      <div style={styles.root}>
+    const contentsView = this.state.loading ? 
         <GridList
           cellHeight={200}
           style={styles.gridList}
@@ -151,10 +135,15 @@ class MyList extends Component {
           <Subheader>MyList</Subheader>
           {images}
         </GridList>
+      : 
+        <CircularProgress />;
+
+    return (
+      <div style={styles.root}>
+        {contentsView}
       </div>
     );
   }
 
 }
 
-export default MyList;
