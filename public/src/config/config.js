@@ -1,6 +1,6 @@
 //config
 module.exports = {
-  HOST: 'localhost',
-  PORT: '3000',
+  HOST: 'mccookietest.herokuapp.com',
+  PORT: '80',
   APIVERSION: '1',
 };
