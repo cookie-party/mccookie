@@ -222,6 +222,7 @@ class Main extends Component{
         flexDirection: 'column',
         justifyContent: 'space-around',
         alignItems: 'center',
+        width: '80%',
         padding: 50,
       },
       mainTable: {
@@ -240,7 +241,7 @@ class Main extends Component{
         display: 'flex',
         flexWrap: 'nowrap',
         justifyContent: 'space-around',
-        width: 700,
+//        width: '80%',
 //        height: '150px',
         margin: 30
       },
@@ -248,7 +249,7 @@ class Main extends Component{
         display: 'flex',
         flexWrap: 'nowrap',
         justifyContent: 'space-around',
-        width: 700,
+        width: '80%',
 //        height: '600',
       },
       tableStyle1: {
@@ -274,8 +275,8 @@ class Main extends Component{
           <SearchBox {...this.state}/>
         </div>
         <div style={{width: 150, display: 'flex'}}>
-          <div style={{margin: 10}}>
-            <FolderIcon style={{cursor: 'pointer', display: 'flex'}}
+          <div style={{display: 'flex',  justifyContent: 'center', flexDirection: 'column',}}>
+            <FolderIcon style={{cursor: 'pointer'}}
              onTouchTap={this.handleMyFolder.bind(this)}/>
           </div>
           <div style={{margin: 10}}>
