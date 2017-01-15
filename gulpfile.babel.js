@@ -29,9 +29,9 @@ gulp.task('sass', ()=>{
 });
 
 gulp.task('run', ()=> {
-  env({
-    file: '.env.json'
-  });
+//  env({
+//    file: '.env.json'
+//  });
   nodemon({
     script: './bin/www',
     ext: 'js',
