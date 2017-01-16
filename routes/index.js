@@ -18,8 +18,8 @@ pool.getConnection((err, conn)=>{
       const sql = 'SELECT * FROM '+target+' WHERE id=?';
       if(conn && id){
         conn.query(sql, id, (err, results)=>{
-          console.log(results[0]);
-          if(err) {
+          console.log(results);
+          if(err || !results) {
             reject(err);
           }
           else if(!results[0] || results[0].activate === 0){
