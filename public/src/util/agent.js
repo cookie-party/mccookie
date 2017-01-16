@@ -2,11 +2,12 @@ import request from 'superagent';
 import config from '../config/config';
 
 const host = config.HOST || 'localhost';
-const port = config.PORT || '3000';
+//const port = config.PORT || '3000';
+const port = config.PORT? ':'+config.PORT:'';
 const ssl = config.SSL || false;
 const http = ssl ? 'https://' : 'http://';
 const version = config.APIVERSION || '1';
-const url = http+host+':'+port+'/api/v'+version+'/';
+const url = http+host+port+'/api/v'+version+'/';
 
 //TODO validate
 //TODO authenticate

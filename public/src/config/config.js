@@ -1,6 +1,6 @@
 //config
 let host = location.href.substring(location.href.indexOf('//')+2, location.href.length-1);
-let port = '80';
+let port = null;
 if(host.indexOf(':')>0) {
   port = host.substring(host.indexOf(':')+1);
   host = host.substring(0,host.indexOf(':'));
