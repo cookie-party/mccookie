@@ -5,7 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var v1 = require('./server/index');
+const router = require('./server/index');
 //var users = require('./server/users');
 
 var app = express();
@@ -18,7 +18,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 //APIは /api/v?/~
-app.use('/api/v1/', v1);
+app.use('/api/v1/', router);
 
 //client向けにbundle.jsを公開
 app.use(express.static(path.join(__dirname, 'public')));

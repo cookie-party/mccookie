@@ -3,6 +3,9 @@ var router = express.Router();
 const pool = require('./dbConn');
 const tables = ['user','tag','wordbook','words'];
 
+//twit wrapper API
+require('./twits')(router);
+
 //mysql
 //サブクエリも使ったらいいかも
 pool.getConnection((err, conn)=>{
