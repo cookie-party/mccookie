@@ -5,8 +5,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var v1 = require('./routes/index');
-var users = require('./routes/users');
+var v1 = require('./server/index');
+//var users = require('./server/users');
 
 var app = express();
 
@@ -26,13 +26,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 //web mainのssr
 app.use('/', function(req, res, next) {
   if(req.url === '/') {
-    const server = require('./public/dist/server');
+    const server = require('./server/public/dist/server');
     const config = process.env;
     server(res, config);
   } else {
     var err = new Error('Not Found');
     err.status = 404;
-    const errssr = require('./public/dist/error');
+    const errssr = require('./server/public/dist/error');
     errssr(res, err.message, err);
   }
 });

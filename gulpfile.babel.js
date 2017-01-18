@@ -15,11 +15,11 @@ gulp.task('webpack', ()=> {
 });
 
 gulp.task('ssr', ()=> {
-  return gulp.src('./public/src/ssr/*.jsx')
+  return gulp.src('./server/public/ssr/*.jsx')
   .pipe(babel({
     presets: ['es2015','react']
   }))
-  .pipe(gulp.dest('./public/dist/'));
+  .pipe(gulp.dest('./server/public/dist/'));
 });
 
 gulp.task('sass', ()=>{

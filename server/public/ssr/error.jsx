@@ -1,5 +1,5 @@
-const React = require('react'),
-  ReactDOMServer = require('react-dom/server');
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
 
 const renderFullPage = function(message, error) {
   return `
