@@ -153,6 +153,14 @@ class Main extends Component{
     }).catch((err)=>{
       console.log('main',err);
     });
+
+    query('tweets')
+    .then((data)=>{
+      //set wordlist
+      console.log(data);
+    }).catch((err)=>{
+      console.log(err);
+    });
   }
 
   handleTop() {
