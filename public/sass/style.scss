@@ -1,7 +1,18 @@
-body {
+html, body {
+  width: 100vw;
+  height: 100vh;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   background-color: #fff5ea;
 }
+
+/*
+@media only screen and (max-width: 600px) {
+  body {
+    font: 32px "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: red;
+  }
+}
+*/
 
 a {
   color: #00B7FF;

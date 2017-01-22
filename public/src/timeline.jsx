@@ -13,11 +13,12 @@ export default class Timeline extends Component {
         justifyContent: 'space-between',
         flexDirection: 'column',
         flexWrap: 'nowrap',
-        alignItems: 'stretch',
+//        alignItems: 'stretch',
+        width: '100%',
       },
       item: {
 //        width: 700
-      }
+      },
     };
 
     const kvList = this.props.wordList.map((kv, i)=>{

@@ -47,6 +47,7 @@ gulp.task('watch', ()=>{
     './public/src/**/*.js',
     './public/src/**/*.jsx',
     './public/sass/**/*.scss',
+    './server/public/ssr/*.jsx',
   ], ['webpack', 'ssr', 'sass']);
 });
 

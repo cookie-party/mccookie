@@ -230,7 +230,7 @@ class Main extends Component{
         flexDirection: 'column',
         justifyContent: 'space-around',
         alignItems: 'center',
-        width: '80%',
+        width: this.props.maxHeight, 
         padding: 50,
       },
       mainTable: {
@@ -238,39 +238,25 @@ class Main extends Component{
         borderColor: '#fcefd6',
         backgroundColor: '#fffcfc',
         margin: '10 auto',
-        width: '90%',
         display: 'flex',
         flexDirection: 'column',
         flexWrap: 'nowrap',
         justifyContent: 'space-around',
         alignItems: 'center',
+        width: '100%',
       },
       register: {
         display: 'flex',
         flexWrap: 'nowrap',
-        justifyContent: 'space-around',
-//        width: '80%',
-//        height: '150px',
+        justifyContent: 'center',
+        width: '90%',
         margin: 30
       },
       timeline: {
         display: 'flex',
         flexWrap: 'nowrap',
-        justifyContent: 'space-around',
-        width: '80%',
-//        height: '600',
-      },
-      tableStyle1: {
-        border : '1px solid black',
-        borderCollapse: 'collapse',
-        borderColor: 'red',
-        height: '75px',
-        margin: '10 auto',
-        tableLayout: 'fixed',
-        width: '90%'
-      },
-      tdStyle1: {
-        border : '1px solid orange',
+        justifyContent: 'center',
+        width: '90%',
       },
     };
 

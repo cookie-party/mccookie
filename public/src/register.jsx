@@ -73,16 +73,22 @@ export default class Register extends Component {
 
   render(){
     const styles = {
+      main: {
+        display: 'flex',
+        flexFlow: 'row nowrap',
+        justifyContent: 'center',
+        width: '100%',
+      },
       row: {
         display: 'flex',
         flexFlow: 'row nowrap',
-        justifyContent: 'space-around',
+        justifyContent: 'center',
         //alignItems: 'baseline',
       },
       column: {
         display: 'flex',
         flexFlow: 'column nowrap',
-        justifyContent: 'space-around',
+        justifyContent: 'center',
         alignItems: 'flex-end',
       },
       icon: {
@@ -129,7 +135,7 @@ export default class Register extends Component {
     const registerMainView = (
       <div>
           {wordInput}
-          <div style={{width: '100%'}}>
+          <div style={{width: '70%'}}>
             <div style={{margin: 10}}>
                 <TextField
                 hintText="意味"
@@ -169,8 +175,8 @@ export default class Register extends Component {
     }
 
     return (
-      <div style={styles.row}>
-        <div style={{width: '50px', margin: 10}}>
+      <div style={styles.main}>
+        <div style={{width: 50, margin: 10}}>
             <img src={icon} style={styles.icon}/>
         </div>
         <div style={styles.column}>

@@ -42,6 +42,7 @@
     "react-cookie": "^1.0.4",
     "react-copy-to-clipboard": "^4.2.3",
     "react-dom": "^15.4.1",
+    "react-responsive-mixin": "^0.4.0",
     "react-tap-event-plugin": "^2.0.0",
     "serve-favicon": "~2.3.0",
     "superagent": "^3.3.1",

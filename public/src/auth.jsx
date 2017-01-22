@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
+import Paper from 'material-ui/Paper';
 import Firebase from 'firebase';
 
 export default class Auth extends Component{
@@ -84,42 +85,47 @@ export default class Auth extends Component{
   } 
 
   render() {
-    const tableStyle = {
-      margin: '0 auto'
+    const styles = {
+      paper: {
+        width: '100%',
+        height: '100%',
+      },
+      row: {
+        display: 'flex',
+        flexFlow: 'row wrap',
+        justifyContent: 'center',
+      },
+      column: {
+        display: 'flex',
+        flexFlow: 'column wrap',
+        justifyContent: 'center',
+      },
     };
     return (
       <div id="authArea">
-        <h2> Mccookie </h2>
-        <table style={tableStyle}>
-        <tr>
-          <td colSpan={2}>
-            <TextField
-              hintText="メールアドレス"
-              onChange={this.onChangeEmail.bind(this)}
-            />
-            <br/>
-            <TextField
-              hintText="Password Field"
-              floatingLabelText="Password"
-              type="password"
-              onChange={this.onChangePassword.bind(this)}
+        <div style={styles.row}>
+          <div style={styles.column}>
+            <div>
+              <TextField
+                hintText="メールアドレス"
+                onChange={this.onChangeEmail.bind(this)}
               />
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <RaisedButton label="ログイン" primary={true} onClick={this.authenticate.bind(this)} />
-          </td>
-          <td>
-            <RaisedButton label="Twitter認証" primary={true} onClick={this.twitterAuth.bind(this)} />
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <RaisedButton label="新規登録" primary={false} onClick={this.register.bind(this)} />
-          </td>
-        </tr>
-        </table>
+            </div>
+            <div>
+              <TextField
+                hintText="Password Field"
+                floatingLabelText="Password"
+                type="password"
+                onChange={this.onChangePassword.bind(this)}
+                />
+            </div>
+            <div>
+              <RaisedButton label="ログイン" primary={true} onClick={this.authenticate.bind(this)} />
+              <RaisedButton label="Twitter認証" primary={true} onClick={this.twitterAuth.bind(this)} />
+              <RaisedButton label="新規登録" primary={false} onClick={this.register.bind(this)} />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

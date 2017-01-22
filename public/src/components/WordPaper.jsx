@@ -64,7 +64,7 @@ export default class WordPaper extends Component {
   render() {
     const styles = {
       value: {
-        width: 400,
+        width: '100%',
 //        height: 120,
         cursor: 'pointer',
         fontSize: '20pt'

@@ -35,35 +35,39 @@ export class TableRow extends Component {
     const styles = {
       row: {
         display: 'flex',
-        flexFlow: 'row wrap',
-        alignItems: 'flexStart',
+//        flexFlow: 'row wrap',
+//        justifyContent: 'space-around',
+//        alignItems: 'flexStart',
       },
       column: {
         display: 'flex',
         flexFlow: 'column wrap',
-        alignItems: 'flexStart',
+        justifyContent: 'center',
       },
       header: {
         display: 'flex',
         flexFlow: 'row wrap',
-        alignItems: 'flexStart',
+        justifyContent: 'center',
       },
       icon: {
         width: 50,
         height: 50,
       },
-      userid: {
-        width: '50px',
-        fontSize: '5pt'
-      },
       username: {
-        width: '150px',
+        flexGrow: 3,
         fontSize: '12pt',
         fontWeight: 'bold',
+        margin: 5,
+      },
+      userid: {
+        flexGrow: 0,
+        fontSize: '5pt',
+        margin: 5,
       },
       time: {
-        width: '30px',
-        fontSize: '5pt'
+        flexGrow: 0,
+        fontSize: '5pt',
+        margin: 5,
       },
       smallIcon: {
         width: 20,
@@ -134,10 +138,10 @@ export class TableRow extends Component {
           transitionLeaveTimeout={500}
           >
         <div style={styles.row}>
-          <div style={{margin: 10}}>
+          <div style={{flexGrow: 0, margin: 10}}>
             <img src={icon} style={styles.icon}/>
           </div>
-          <div>
+          <div style={{flexGrow: 1, margin: 10}}>
             {content}
           </div>
         </div>
