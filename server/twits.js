@@ -16,11 +16,11 @@ module.exports = function twitWrapeer(router) {
     process.env.CONSUMER_KEY, //twitter appで発行されたConsumer keyを入力。
     process.env.CONSUMER_SECRET, //twitter appで発行されたConsumer secretを入力。
     '1.0A',
-    'http://127.0.0.1:3000/api/v1/auth/twitter/callback',
+    'http://127.0.0.1:3000/api/v1/twitter/auth/callback',
     'HMAC-SHA1'
   );
   //OAuth 1.0 //passport-twitterにしてもいいかも
-  router.get('/auth/twitter', (req, res, next)=> {
+  router.get('/twitter/auth', (req, res, next)=> {
     const sess = req.session;
     sess.view = sess.view? sess.view++ : 1;
     //console.log('req.session',sess);
@@ -31,7 +31,7 @@ module.exports = function twitWrapeer(router) {
       } else {
         sess.oauth = {};
         sess.oauth.token = oauth_token;
-        //console.log('oauth.token: ' + sess.oauth.token);
+        console.log('oauth.token: ' + sess.oauth.token);
         sess.oauth.token_secret = oauth_token_secret;
         //console.log('oauth.token_secret: ' + sess.oauth.token_secret);
         sess.save(()=>{
@@ -42,7 +42,7 @@ module.exports = function twitWrapeer(router) {
     });
   });
 
-  router.get('/auth/twitter/callback', (req, res, next)=>{
+  router.get('/twitter/auth/callback', (req, res, next)=>{
     console.log('callback, session = ', req.session);
     if (req.session.oauth) {
       req.session.oauth.verifier = req.query.oauth_verifier;
@@ -73,11 +73,32 @@ module.exports = function twitWrapeer(router) {
         req.session.oauth.access_token, 
         req.session.oauth.access_token_secret,
         {status: text},
-        function (err, data, response) {
+        (err, data, response) => {
           if (err) {
             res.send('too bad.' + JSON.stringify(err));
           } else {
             res.send('posted successfully...!');
+          }
+        });
+    }
+    else {
+      next(new Error('you\'re not supposed to be here.'));
+    }
+  });
+
+  router.get('/twitter/search', (req, res, next)=>{
+    console.log('twitter/post session', req.session);
+    const key = req.query.key || '*';
+    if(req.session.oauth) {
+      oa.get(
+        'https://api.twitter.com/1.1/search/tweets.json?q='+key,
+        req.session.oauth.access_token, 
+        req.session.oauth.access_token_secret,
+        (err, data, response) => {
+          if (err) {
+            res.send('too bad.' + JSON.stringify(err));
+          } else {
+            res.send('tweets', response);
           }
         });
     }
