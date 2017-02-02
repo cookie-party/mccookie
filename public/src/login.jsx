@@ -5,9 +5,10 @@ import firebase from 'firebase';
 import cookie from 'react-cookie';
 
 //import config from './config/config';
-import Auth from './auth';
+import TAuth from './twitterauth';
 import Main from './main';
 const env = window ? window.APP_PROPS : {};
+const oauth = window ? window.APP_OAUTH : {};
 
 export default class LoginPage extends Component{
   constructor(props, state){
@@ -33,7 +34,8 @@ export default class LoginPage extends Component{
   }
 
   componentWillMount() {
-    this.setState({ userId: cookie.load('userId') });
+//    this.setState({ userId: cookie.load('userId') });
+    this.setState({ userId: oauth });
   }
 
   componentDidMount() {
@@ -87,7 +89,7 @@ export default class LoginPage extends Component{
     let main = <Main {...this.state}/>;
 
     if (!this.state.userId) {
-      main =  <Auth {...this.state} />;
+      main =  <TAuth {...this.state} />;
     }
 
     return (

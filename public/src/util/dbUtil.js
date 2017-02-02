@@ -18,7 +18,6 @@ export function getUserData(uid) {
     });
   });
 }
-*/
 
 export function getTagList() {
   return new Promise((resolve, reject)=>{
@@ -34,3 +33,4 @@ export function getTagList() {
     });
   });
 }
+*/

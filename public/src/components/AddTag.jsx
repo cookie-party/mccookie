@@ -4,7 +4,7 @@ import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import CircularProgress from 'material-ui/CircularProgress';
 
-import {getTagList} from '../util/dbUtil';
+//import {getTagList} from '../util/dbUtil';
 
 export default class AddTags extends Component{
   constructor(props, state){
@@ -16,12 +16,14 @@ export default class AddTags extends Component{
 
   componentDidMount() {
     let tagList = [];
+    /*
     getTagList().then((tags)=>{
       tagList = tags;
       this.setState({tagList});
     }).catch((err)=>{
       console.log(err);
     });
+    */
   }
 
   render() {

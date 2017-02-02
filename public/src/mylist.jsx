@@ -51,6 +51,7 @@ export default class MyList extends Component {
   }
 
   componentDidMount(){
+    /*
     //get
     query('stocklist', this.props.userId)
     .then((result)=>{
@@ -66,6 +67,7 @@ export default class MyList extends Component {
       console.log(err);
       this.setState({loading: true });
     });
+    */
   }
 
   render(){

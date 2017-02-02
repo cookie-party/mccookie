@@ -15,7 +15,8 @@ import Paper from 'material-ui/Paper';
 import CircularProgress from 'material-ui/CircularProgress';
 
 import {getUserData} from './util/dbUtil';
-import {query, post} from './util/agent';
+//import {query, post} from './util/agent';
+import {getTweets} from './util/agent';
 
 import Register from './register';
 import Timeline from './timeline';
@@ -53,6 +54,7 @@ class Main extends Component{
     };
 
     this.state.emitter.on('cookieRegister', (kv)=>{
+      /*
       post('newword', {
         id: kv.id,
         key: kv.key,
@@ -66,6 +68,7 @@ class Main extends Component{
         alert('Regist Error', err);
         console.log('Regist Error', err);
       });
+      */
     }).on('cookieSearch', (searchWord)=> {
       this.setState({searchWord});
     }).on('cookieEditMyprof', ()=> {
@@ -73,18 +76,21 @@ class Main extends Component{
     }).on('cookieRegisterMyprof', ()=> {
       //register
     }).on('cookieListStart', (id)=>{
+      /*
       query('getWordList',id)
       .then((wordList)=>{
         this.setState({contents: 0, wordList});
       }).catch((err)=>{
         console.log(err);
       });
+      */
     }).on('cookieNewList', ()=>{
       this.setState({contents: 3});
     }).on('cookieItemToBook', (cardid)=> {
       this.setState({
         addmylistDialogFlag: true,
         onAddMylist:(bookid)=>{
+          /*
           post('addMyList', {
             cardid: cardid,
             bookid: bookid,
@@ -93,6 +99,7 @@ class Main extends Component{
           }).catch(()=>{
             alert('Miss Delete');
           });
+          */
         }
       });
     }).on('cookieItemDelete', (id)=> {
@@ -109,6 +116,7 @@ class Main extends Component{
           deleteDialogFlag: true,
           onDeleteItem:()=>{
             wordlist.splice(deleteIdx, 1);
+            /*
             post('deleteWordId', {
               id: id,
               target: 'words'
@@ -117,6 +125,7 @@ class Main extends Component{
             }).catch(()=>{
               alert('Miss Delete');
             });
+            */
           }
         });
       }
@@ -126,7 +135,43 @@ class Main extends Component{
 
   componentDidMount() {
     //ユーザ情報取得
-    this.setState({contents: -1});
+    this.setState({contents: 0});
+    getTweets('mccookie').then((res)=>{
+      const response = JSON.parse(res);
+      const wordList = response.statuses.map((v)=>{
+        return {
+          id: v.id,
+          key: v.text,
+          value: v.text
+        };
+      });
+      this.setState({
+        wordList,
+        contents: 0
+      });
+      /*
+      if(words.length > 0){
+        const wordList = this.state.wordList;
+        words.map((r)=>{
+          wordList.push({
+            id: r.id, 
+            key: r.keyText, 
+            value: r.valueText, 
+            tags: r.tagList, 
+            updateDate: r.updateDate
+          });
+        });
+        this.setState({
+          userInfo,
+          wordList,
+          contents: 0
+        });
+      }
+      */
+    }).catch((err)=>{
+    });
+
+    /*
     let userInfo = {};
     query('user', this.state.userId)
     .then((retUserInfo)=>{
@@ -161,11 +206,13 @@ class Main extends Component{
     }).catch((err)=>{
       console.log(err);
     });
+    */
   }
 
   handleTop() {
     //ユーザ情報取得
-    this.setState({contents: -1});
+    this.setState({contents: 0});
+    /*
     query('getTimeline', this.state.userId)
     .then((words)=>{
       if(words.length > 0){
@@ -187,6 +234,7 @@ class Main extends Component{
     }).catch((err)=>{
       console.log('main',err);
     });
+    */
   }
   handleMyprof() {
     this.setState({contents: 1});

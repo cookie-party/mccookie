@@ -55,6 +55,7 @@ export default class Auth extends Component{
     });
   }
 
+  /*
   twitterAuth() {
     //console.log('twitterAuth');
     const provider = new Firebase.auth.TwitterAuthProvider();
@@ -77,6 +78,7 @@ export default class Auth extends Component{
       console.log('login failed '+JSON.stringify(error));
     });
   }
+  */
 
   logout() {
     //console.log('logout');

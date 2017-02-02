@@ -14,14 +14,48 @@ const url = http+host+port+'/api/v'+version+'/';
 //TODO sns連携
 //TODO activate=false のdelete判定
 
+// export const authenticate = ()=> {
+//   return new Promise((resolve, reject)=>{
+//     console.log('authenticate');
+//     request
+//       .get(url+'/twitter/auth')
+//       .end((err, res)=>{
+//         console.log('twitter/auth',res);
+//         if(err) reject(err);
+//         else if(!res.text) reject('{}'); //no data
+//         else resolve(JSON.parse(res.text));
+//       });
+//   });
+// };
+
+export const getTweets = (key)=> {
+  return new Promise((resolve, reject)=>{
+    console.log('getTweets', key);
+    request
+      .get(url+'/twitter/search')
+      .query({key: key})
+      .end((err, res)=>{
+        console.log('/twitter/search',res);
+        if(err) reject(err);
+        else if(!res.text) reject('{}'); //no data
+        else resolve(JSON.parse(res.text));
+      });
+  });
+};
+
+
+
+/*
 export const query = (target, id, column)=> {
   return new Promise((resolve, reject)=>{
+    console.log('query',target);
     const query = column? {id: id, column: column} : {id: id};
     request
       .get(url+target)
       .set('userid', window.userId)
       .query(query)
       .end(function(err, res){
+        console.log('query',res);
         if(err) reject(err);
         else if(!res.text) reject('{}'); //no data
         else resolve(JSON.parse(res.text));
@@ -31,11 +65,13 @@ export const query = (target, id, column)=> {
 
 export const post = (target, body)=> {
   return new Promise((resolve, reject)=>{
+    console.log('post',target);
     request
       .post(url+target)
       .set('userid', window.userId)
       .send(body)
       .end(function(err, res){
+        console.log('post',res);
         if(err) reject(err);
         else if(!res.text) reject('{}'); //no data
         else resolve(JSON.parse(res.text));
@@ -50,6 +86,7 @@ export const update = (target, body)=> {
       .set('userid', window.userId)
       .send(body)
       .end(function(err, res){
+        console.log('update',res);
         if(err) reject(err);
         else if(!res.text) reject('{}'); //no data
         else resolve(JSON.parse(res.text));
@@ -81,3 +118,4 @@ export const deleteColumn = (target, id)=> {
       });
   });
 };
+*/

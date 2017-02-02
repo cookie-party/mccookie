@@ -16,6 +16,7 @@ export default class AddMylistDialog extends Component{
   }
 
   componentDidMount() {
+    /*
     query('mybooklist',this.props.userId)
     .then((result)=>{
       const booklist = result;
@@ -23,6 +24,7 @@ export default class AddMylistDialog extends Component{
     }).catch((err)=>{
       console.log(err);
     });
+    */
   }
 
   onChange(e) {

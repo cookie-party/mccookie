@@ -1,5 +1,5 @@
 /*global process*/
-require('dotenv').config();
+//require('dotenv').config();
 
 //mysql
 const mysql = require('mysql');

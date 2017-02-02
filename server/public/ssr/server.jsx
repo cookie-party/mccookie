@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 
-const renderFullPage = function(config) {
-  //console.log('dir',__dirname);
+const renderFullPage = function(config, session) {
+  //console.log('session',session);
   return `
     <!DOCTYPE html>
       <html>
@@ -20,6 +20,7 @@ const renderFullPage = function(config) {
 
       <script>
         var APP_PROPS = ${JSON.stringify(config)};
+        var APP_OAUTH = ${JSON.stringify(session.oauth)};
       </script>
 
       <script src="dist/bundle.js"></script>
@@ -30,8 +31,8 @@ const renderFullPage = function(config) {
     `;
 };
 
-const serverSideRendering = function(res, config){
-  const renderedPage = renderFullPage(config);
+const serverSideRendering = function(res, config, session){
+  const renderedPage = renderFullPage(config, session);
   res.status(200).send(renderedPage);
 };
 
