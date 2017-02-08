@@ -43,6 +43,20 @@ export const getTweets = (key)=> {
   });
 };
 
+export const getUsers = (key)=> {
+  return new Promise((resolve, reject)=>{
+    console.log('getUsers', key);
+    request
+      .get(url+'/twitter/users')
+      .query({key: key})
+      .end((err, res)=>{
+        console.log('/twitter/users',res);
+        if(err) reject(err);
+        else if(!res.text) reject('{}'); //no data
+        else resolve(JSON.parse(res.text));
+      });
+  });
+};
 
 
 /*

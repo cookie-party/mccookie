@@ -16,7 +16,7 @@ import CircularProgress from 'material-ui/CircularProgress';
 
 import {getUserData} from './util/dbUtil';
 //import {query, post} from './util/agent';
-import {getTweets} from './util/agent';
+import {getTweets,getUsers} from './util/agent';
 
 import Register from './register';
 import Timeline from './timeline';
@@ -136,7 +136,8 @@ class Main extends Component{
   componentDidMount() {
     //ユーザ情報取得
     this.setState({contents: 0});
-    getTweets('mccookie').then((res)=>{
+    const key = encodeURI('@mccookie0120');
+    getUsers(key).then((res)=>{
       const response = JSON.parse(res);
       const wordList = response.statuses.map((v)=>{
         return {
