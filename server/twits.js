@@ -130,6 +130,129 @@ module.exports = function twitWrapeer(router) {
     }
   });
 
+  router.get('/twitter/account/settings', (req, res, next)=>{
+    console.log('twitter/account/settings session', req.session);
+    if(req.session.oauth) {
+      oa.get(
+        'https://api.twitter.com/1.1/account/settings.json',
+        req.session.oauth.access_token, 
+        req.session.oauth.access_token_secret,
+        (err, data, response) => {
+          if (err) {
+            res.send(JSON.stringify(err));
+          } else {
+            res.send(JSON.stringify(data));
+          }
+        });
+    }
+    else {
+      res.redirect('/');
+    }
+  });
+
+  router.get('/twitter/account/credentials', (req, res, next)=>{
+    console.log('twitter/account/credentials session', req.session);
+    if(req.session.oauth) {
+      oa.get(
+        'https://api.twitter.com/1.1/account/verify_credentials.json',
+        req.session.oauth.access_token, 
+        req.session.oauth.access_token_secret,
+        (err, data, response) => {
+          if (err) {
+            res.send(JSON.stringify(err));
+          } else {
+            res.send(JSON.stringify(data));
+          }
+        });
+    }
+    else {
+      res.redirect('/');
+    }
+  });
+
+  router.get('/twitter/application/rate', (req, res, next)=>{
+    console.log('twitter/application/rate session', req.session);
+    if(req.session.oauth) {
+      oa.get(
+        'https://api.twitter.com/1.1/applicaion/rate_limit_status.json',
+        req.session.oauth.access_token, 
+        req.session.oauth.access_token_secret,
+        (err, data, response) => {
+          if (err) {
+            res.send(JSON.stringify(err));
+          } else {
+            res.send(JSON.stringify(data));
+          }
+        });
+    }
+    else {
+      res.redirect('/');
+    }
+  });
+
+  router.get('/twitter/collections/entries', (req, res, next)=>{
+    console.log('twitter/collections/entries session', req.session);
+    const id = req.query.id;
+    if(req.session.oauth) {
+      oa.get(
+        'https://api.twitter.com/1.1/collections/entries.json?id='+id,
+        req.session.oauth.access_token, 
+        req.session.oauth.access_token_secret,
+        (err, data, response) => {
+          if (err) {
+            res.send(JSON.stringify(err));
+          } else {
+            res.send(JSON.stringify(data));
+          }
+        });
+    }
+    else {
+      res.redirect('/');
+    }
+  });
+
+  router.get('/twitter/collections/list', (req, res, next)=>{
+    console.log('twitter/collections/list session', req.session);
+    const userId = req.query.userId;
+    if(req.session.oauth) {
+      oa.get(
+        'https://api.twitter.com/1.1/collections/list.json?user_id='+userId,
+        req.session.oauth.access_token, 
+        req.session.oauth.access_token_secret,
+        (err, data, response) => {
+          if (err) {
+            res.send(JSON.stringify(err));
+          } else {
+            res.send(JSON.stringify(data));
+          }
+        });
+    }
+    else {
+      res.redirect('/');
+    }
+  });
+
+  router.get('/twitter/collections/shoq', (req, res, next)=>{
+    console.log('twitter/collections/show session', req.session);
+    const userId = req.query.userId;
+    if(req.session.oauth) {
+      oa.get(
+        'https://api.twitter.com/1.1/collections/list.json?user_id='+userId,
+        req.session.oauth.access_token, 
+        req.session.oauth.access_token_secret,
+        (err, data, response) => {
+          if (err) {
+            res.send(JSON.stringify(err));
+          } else {
+            res.send(JSON.stringify(data));
+          }
+        });
+    }
+    else {
+      res.redirect('/');
+    }
+  });
+  
   /*
   //Twit
   const T = new Twit({
