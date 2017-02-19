@@ -58,8 +58,49 @@ export const getUsers = (key)=> {
   });
 };
 
+export const getCredentials = ()=>{
+  return new Promise((resolve, reject)=>{
+    console.log('getCredentials');
+    request
+      .get(url+'/twitter/account/credentials')
+      .end((err, res)=>{
+        console.log('/twitter/account/credentials', res);
+        if(err) reject(err);
+        else if(!res.text) reject({});
+        else resolve(JSON.parse(res.text));
+      });
+  });
+};
 
-/*
+export const getTimeline = ()=>{
+  return new Promise((resolve, reject)=>{
+    console.log('getTimeline');
+    request
+      .get(url+'/twitter/statuses/timeline')
+      .end((err, res)=>{
+        console.log('/twitter/statuses/timeline', res);
+        if(err) reject(err);
+        else if(!res.text) reject({});
+        else resolve(JSON.parse(res.text));
+      });
+  });
+};
+
+export const postTweet = (text)=> {
+  return new Promise((resolve, reject)=>{
+    console.log('postTweet',text);
+    request
+      .get(url+'/twitter/post')
+      .query({text:text})
+      .end((err, res)=>{
+        console.log('query',res);
+        if(err) reject(err);
+        else if(!res.text) reject('{}'); //no data
+        else resolve(res);
+      });
+  });
+};
+
 export const query = (target, id, column)=> {
   return new Promise((resolve, reject)=>{
     console.log('query',target);
@@ -77,6 +118,7 @@ export const query = (target, id, column)=> {
   });
 };
 
+/*
 export const post = (target, body)=> {
   return new Promise((resolve, reject)=>{
     console.log('post',target);

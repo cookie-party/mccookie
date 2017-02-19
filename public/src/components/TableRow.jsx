@@ -8,6 +8,7 @@ import DeleteIcon from 'material-ui/svg-icons/action/delete';
 import IconView from './IconView';
 import WordPaper from './WordPaper';
 
+//TODO 画像も表示する
 export class TableRow extends Component { 
   constructor(props, state){
     super(props,state);

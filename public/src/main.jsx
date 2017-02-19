@@ -16,7 +16,8 @@ import CircularProgress from 'material-ui/CircularProgress';
 
 import {getUserData} from './util/dbUtil';
 //import {query, post} from './util/agent';
-import {getTweets,getUsers} from './util/agent';
+import {getTweets, getUsers, getCredentials, getTimeline,
+  postTweet} from './util/agent';
 
 import Register from './register';
 import Timeline from './timeline';
@@ -46,7 +47,9 @@ class Main extends Component{
       }],
       searchWord: '',
       userId: this.props.userId,
-      userInfo: {},
+      userInfo: {
+        icon: '',
+      },
       onDeleteItem: ()=>{},
       onAddMylist: ()=>{},
       deleteDialogFlag: false,
@@ -54,6 +57,13 @@ class Main extends Component{
     };
 
     this.state.emitter.on('cookieRegister', (kv)=>{
+      const kvtext = kv.key + ':' + kv.value;
+      postTweet(kvtext)
+      .then((success)=>{
+        console.log('success',success);
+      }).catch((err)=>{
+        console.log(err);
+      });
       /*
       post('newword', {
         id: kv.id,
@@ -136,10 +146,42 @@ class Main extends Component{
   componentDidMount() {
     //ユーザ情報取得
     this.setState({contents: 0});
-    const key = encodeURI('@mccookie0120');
-    getUsers(key).then((res)=>{
-      const response = JSON.parse(res);
-      const wordList = response.statuses.map((v)=>{
+    //const key = encodeURI('@mccookie0120');
+    getCredentials().then((res)=>{
+      if(res){
+        const response = JSON.parse(res);
+        //console.log(response);
+        this.setState({
+          userInfo: {
+            icon: response.profile_image_url
+          }
+        });
+      }
+      return getTimeline();
+    }).then((res)=>{
+      if(res){
+        const response = JSON.parse(res);
+        const wordList = response.map((v)=>{
+          return {
+            id: v.id,
+            key: v.text,
+            value: v.text,
+            userid: v.user.name,
+            username:v.user.screen_name,
+            icon:v.user.profile_image_url,
+          };
+        });
+        this.setState({
+          wordList,
+          contents: 0
+        });
+      }
+    }).catch((err)=>{
+      console.log(err);
+    });
+
+      /*
+      const wordList = res.statuses.map((v)=>{
         return {
           id: v.id,
           key: v.text,
@@ -168,9 +210,9 @@ class Main extends Component{
           contents: 0
         });
       }
-      */
     }).catch((err)=>{
     });
+    */
 
     /*
     let userInfo = {};

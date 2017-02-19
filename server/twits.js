@@ -66,7 +66,7 @@ module.exports = function twitWrapeer(router) {
 
   router.get('/twitter/post', (req, res, next)=>{
     console.log('twitter/post session', req.session);
-    const text = req.query.text || 'oauthでツイートしたった';
+    const text = req.query.text || '';
     if(req.session.oauth) {
       oa.post(
         'https://api.twitter.com/1.1/statuses/update.json',
@@ -232,7 +232,7 @@ module.exports = function twitWrapeer(router) {
     }
   });
 
-  router.get('/twitter/collections/shoq', (req, res, next)=>{
+  router.get('/twitter/collections/show', (req, res, next)=>{
     console.log('twitter/collections/show session', req.session);
     const userId = req.query.userId;
     if(req.session.oauth) {
@@ -253,6 +253,27 @@ module.exports = function twitWrapeer(router) {
     }
   });
   
+  router.get('/twitter/statuses/timeline', (req, res, next)=>{
+    console.log('twitter/statuses/timeline session', req.session);
+    const userId = req.query.userId;
+    if(req.session.oauth) {
+      oa.get(
+        'https://api.twitter.com/1.1/statuses/home_timeline.json',
+        req.session.oauth.access_token, 
+        req.session.oauth.access_token_secret,
+        (err, data, response) => {
+          if (err) {
+            res.send(JSON.stringify(err));
+          } else {
+            res.send(JSON.stringify(data));
+          }
+        });
+    }
+    else {
+      res.redirect('/');
+    }
+  });
+
   /*
   //Twit
   const T = new Twit({
