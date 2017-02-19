@@ -35,7 +35,7 @@ app.use('/', function(req, res, next) {
   if(req.url === '/') {
     const server = require('./server/public/dist/server');
     const config = process.env;
-    server(res, config);
+    server(res, config, req.session);
   } else {
     var err = new Error('Not Found');
     err.status = 404;

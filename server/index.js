@@ -1,11 +1,13 @@
 var express = require('express');
 var router = express.Router();
-const pool = require('./dbConn');
+//const pool = require('./dbConn');
 const tables = ['user','tag','wordbook','words'];
+require('dotenv').config();
 
 //twit wrapper API
 require('./twits')(router);
 
+/*
 //mysql
 //サブクエリも使ったらいいかも
 pool.getConnection((err, conn)=>{
@@ -125,21 +127,21 @@ pool.getConnection((err, conn)=>{
       }
     });
   };
-  
-  /* GET version. */
+
+  // GET version. 
   router.get('/', function(req, res, next) {
   //  res.render('index', { title: 'Express' });
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ 'api-version': 'v1' }));
   });
 
-  /* GET version. */
+  // GET version. 
   router.get('/version', function(req, res, next) {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ 'api-version': 'v1' }));
   });
 
-  /* GET DATA */
+  // GET DATA 
   tables.forEach((table)=>{
     router.get('/'+table, function(req, res, next) {
       getDataById(conn, table, req.query.id)
@@ -155,7 +157,7 @@ pool.getConnection((err, conn)=>{
     });
   });
 
-  /* GET DATA BY TARGETID */
+  // GET DATA BY TARGETID 
   tables.forEach((table)=>{
     router.get('/'+table+'ByColumn', function(req, res, next) {
       getDataBySpedifiedColumn(conn, table, req.query.column, req.query.id)
@@ -171,7 +173,7 @@ pool.getConnection((err, conn)=>{
     });
   });
 
-  /* INSERT DATA */
+  // INSERT DATA 
   tables.forEach((table)=>{
     router.post('/'+table, function(req, res, next) {
       insertData(conn, table, req.body)
@@ -187,7 +189,7 @@ pool.getConnection((err, conn)=>{
     });
   });
 
-  /* UPDATE DATA */
+  // UPDATE DATA 
   tables.forEach((table)=>{
     router.put('/'+table, function(req, res, next) {
       updateData(conn, table, req.body)
@@ -203,7 +205,7 @@ pool.getConnection((err, conn)=>{
     });
   });
 
-  /** worddata取得 */
+  // worddata取得 
   router.get('/getTimeline', function(req, res, next) {
     const userid = req.headers.userid || 1;
     getDataById(conn, 'user', userid)
@@ -245,7 +247,7 @@ pool.getConnection((err, conn)=>{
     });
   });
 
-  /** worddata取得 from wordbook */
+  // worddata取得 from wordbook 
   router.get('/getWordList', function(req, res, next) {
     const bookid = req.query.id || 1;
     getDataById(conn, 'wordbook', bookid)
@@ -287,7 +289,7 @@ pool.getConnection((err, conn)=>{
     });
   });
 
-  /******** API ********/
+  // API 
   router.post('/deleteWordId', function(req, res, next) {
     const deleteId = req.body.id;
     const userId = req.headers.userid;
@@ -336,12 +338,7 @@ pool.getConnection((err, conn)=>{
     }
   });
 
-
-
-  /** 
-   * register word data 
-   * */
-  /** タグ追加 */
+  // タグ追加 
   const putTag = (tag)=>{
     return new Promise((resolve,reject)=>{
       conn.query('SELECT * FROM tag WHERE name=?', tag, function(err, result) {
@@ -359,7 +356,7 @@ pool.getConnection((err, conn)=>{
       });
     });
   };
-  /** 単語追加 */
+  // 単語追加 
   router.post('/newword', function(req, res, next) {
     const id = 1; //TODO request-header にユーザidを入れたい
     const tagList = req.body.tags.split(',');
@@ -415,7 +412,7 @@ pool.getConnection((err, conn)=>{
     }
   });
 
-  /** booklistを追加 */
+  // booklistを追加 
   router.post('/newbook', function(req, res, next) {
     const id = 1; //TODO request-header にユーザidを入れたい
     const userId = req.headers.userid;
@@ -460,7 +457,7 @@ pool.getConnection((err, conn)=>{
     }
   });
 
-  /** booklistに追加 */
+  // booklistに追加 
   router.post('/addmylist', function(req, res, next) {
     const id = 1; //TODO request-header にユーザidを入れたい
     const userId = req.headers.userid;
@@ -557,7 +554,7 @@ pool.getConnection((err, conn)=>{
     });
   });
 
-  /** System data */
+  // System data 
   router.get('/popularTags', function(req, res, next) {
     const id = req.query.id || 1;
     getDataById(conn, 'system', id)
@@ -580,6 +577,7 @@ pool.getConnection((err, conn)=>{
       res.end(JSON.stringify(err));
     });
   });
+  */
 
   /* GET Dictionary. */
   router.get('/ejdic', function(req, res, next) {
@@ -594,6 +592,6 @@ pool.getConnection((err, conn)=>{
     res.end(JSON.stringify(meaning));
   });
 
-});
+//});
 
 module.exports = router;
