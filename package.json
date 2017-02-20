@@ -33,6 +33,7 @@
     "express": "~4.13.1",
     "express-session": "^1.15.0",
     "firebase": "^3.6.4",
+    "https-proxy-agent": "^1.0.0",
     "jade": "~1.11.0",
     "material-ui": "^0.16.0",
     "morgan": "~1.6.1",

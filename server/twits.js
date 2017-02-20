@@ -1,6 +1,7 @@
 const router = require('express').Router();
 //const Twit = require('twit');
 const OAuth = require('oauth').OAuth;
+//const OAuth2 = require('oauth').OAuth2;
 
 module.exports = function twitWrapeer(router) {
 
@@ -19,6 +20,31 @@ module.exports = function twitWrapeer(router) {
     'http://127.0.0.1:3000/api/v1/twitter/auth/callback',
     'HMAC-SHA1'
   );
+
+  /*
+  const twitterConsumerKey = process.env.CONSUMER_KEY;
+  const twitterConsumerSecret = process.env.CONSUMER_SECRET;
+  const oa2 = new OAuth2(
+    twitterConsumerKey,
+    twitterConsumerSecret, 
+    'https://api.twitter.com/', 
+    null,
+    'oauth2/token', 
+    null);
+  const HttpsProxyAgent = require('https-proxy-agent');
+  if (process.env['https_proxy']) {
+    const httpsProxyAgent = new HttpsProxyAgent(process.env['https_proxy']);
+    oa2.setAgent(httpsProxyAgent);
+  }
+  oa2.getOAuthAccessToken(
+    '',
+    {'grant_type':'client_credentials'},
+    function (e, access_token, refresh_token, results){
+      console.log('bearer: ',access_token);
+      console.log('results: ',results);
+    });
+  */
+
   //OAuth 1.0 //passport-twitterにしてもいいかも
   router.get('/twitter/auth', (req, res, next)=> {
     const sess = req.session;
@@ -26,8 +52,8 @@ module.exports = function twitWrapeer(router) {
     // console.log('req.session',sess);
     oa.getOAuthRequestToken((error, oauth_token, oauth_token_secret, results)=>{
       if (error) {
-        console.log(error);
-        res.send('yeah no. didn\'t work.');
+        //console.log(error);
+        res.send(error);
       } else {
         sess.oauth = {};
         sess.oauth.token = oauth_token;
