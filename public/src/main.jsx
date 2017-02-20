@@ -17,7 +17,7 @@ import CircularProgress from 'material-ui/CircularProgress';
 import {getUserData} from './util/dbUtil';
 //import {query, post} from './util/agent';
 import {getTweets, getUsers, getCredentials, getTimeline,
-  postTweet} from './util/agent';
+  postTweet,getUserTimeline} from './util/agent';
 
 import Register from './register';
 import Timeline from './timeline';
@@ -57,7 +57,7 @@ class Main extends Component{
     };
 
     this.state.emitter.on('cookieRegister', (kv)=>{
-      const kvtext = kv.key + ':' + kv.value;
+      const kvtext = kv.key + ':' + kv.value+'  #くーこれ';
       postTweet(kvtext)
       .then((success)=>{
         console.log('success',success);
@@ -157,7 +157,8 @@ class Main extends Component{
           }
         });
       }
-      return getTimeline();
+//      return getTimeline();
+      return getUserTimeline();
     }).then((res)=>{
       if(res){
         const response = JSON.parse(res);

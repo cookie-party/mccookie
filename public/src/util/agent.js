@@ -86,6 +86,20 @@ export const getTimeline = ()=>{
   });
 };
 
+export const getUserTimeline = ()=>{
+  return new Promise((resolve, reject)=>{
+    console.log('getUserTimeline');
+    request
+      .get(url+'/twitter/statuses/userTimeline')
+      .end((err, res)=>{
+        console.log('/twitter/statuses/userTimeline', res);
+        if(err) reject(err);
+        else if(!res.text) reject({});
+        else resolve(JSON.parse(res.text));
+      });
+  });
+};
+
 export const postTweet = (text)=> {
   return new Promise((resolve, reject)=>{
     console.log('postTweet',text);

@@ -274,6 +274,27 @@ module.exports = function twitWrapeer(router) {
     }
   });
 
+  router.get('/twitter/statuses/userTimeline', (req, res, next)=>{
+    console.log('twitter/statuses/userTimeline session', req.session);
+    const userId = req.query.userId;
+    if(req.session.oauth) {
+      oa.get(
+        'https://api.twitter.com/1.1/statuses/user_timeline.json',
+        req.session.oauth.access_token, 
+        req.session.oauth.access_token_secret,
+        (err, data, response) => {
+          if (err) {
+            res.send(JSON.stringify(err));
+          } else {
+            res.send(JSON.stringify(data));
+          }
+        });
+    }
+    else {
+      res.redirect('/');
+    }
+  });
+
   /*
   //Twit
   const T = new Twit({
