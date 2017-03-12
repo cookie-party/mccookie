@@ -28,6 +28,8 @@ import AddMylistDialog from './components/AddMylistDialog';
 import MyList from './mylist';
 import NewList from './newlist';
 
+import Constant from './constant';
+
 class Main extends Component{
   constructor(props, state){
     super(props, state);
@@ -57,7 +59,7 @@ class Main extends Component{
     };
 
     this.state.emitter.on('cookieRegister', (kv)=>{
-      const kvtext = kv.key + ':' + kv.value+'  #くーこれ';
+      const kvtext = kv.key + Constant.SEPARATOR + kv.value + Constant.SEPARATOR + Constant.HASHTAG;
       postTweet(kvtext)
       .then((success)=>{
         console.log('success',success);
@@ -162,14 +164,20 @@ class Main extends Component{
     }).then((res)=>{
       if(res){
         const response = JSON.parse(res);
-        const wordList = response.map((v)=>{
+        const wordList = response
+        .filter((v)=>{
+          return v.text.indexOf(Constant.HASHTAG) > 0 && v.text.indexOf(Constant.ATTMARK) !== 0;
+        })
+        .map((v)=>{
+          const keyValues = v.text.split(Constant.SEPARATOR);
           return {
             id: v.id,
-            key: v.text,
-            value: v.text,
+            key: keyValues[0],
+            value: keyValues[1],
             userid: v.user.name,
             username:v.user.screen_name,
             icon:v.user.profile_image_url,
+            time: +new Date(v.created_at),
           };
         });
         this.setState({
