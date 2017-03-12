@@ -8,6 +8,8 @@ import DeleteIcon from 'material-ui/svg-icons/action/delete';
 import IconView from './IconView';
 import WordPaper from './WordPaper';
 
+import moment from 'moment';
+
 //TODO 画像も表示する
 export class TableRow extends Component { 
   constructor(props, state){
@@ -85,10 +87,23 @@ export class TableRow extends Component {
     const userid = item.username || '@satomi';
 //    const key = item.key || 'nokey';
 //    const value = item.value || 'novalue';
-    let time = 0;
-    const now = new Date().getTime;
+
+    let time = '';
+    const now = moment();
     if(item.time){
-      time = now - item.time;
+      const day = now.diff(moment(item.time), 'days');
+      const hour = now.diff(moment(item.time), 'hours');
+      const minute = now.diff(moment(item.time), 'minutes');
+      const second = now.diff(moment(item.time), 'seconds');
+      if(day !== 0) {
+        time += day + ' days';
+      } else if(hour !== 0) {
+        time += hour + ' hours';
+      } else if(minute !== 0) {
+        time += minute + ' minutes';
+      } else if(second !== 0) {
+        time += second + ' seconds';
+      }
     }
 
     const iconlist = (
@@ -118,7 +133,7 @@ export class TableRow extends Component {
             {userid}
           </div>
           <div style={styles.time}>
-            {time} ms
+            {time}
           </div>
         </div>
         <WordPaper {...this.props}/>

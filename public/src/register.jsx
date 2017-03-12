@@ -10,6 +10,8 @@ import IconView from './components/IconView';
 import Dictionary from './components/Dictionary';
 import AddTag from './components/AddTag';
 
+import Constant from './constant';
+
 export default class Register extends Component {
   constructor(props, state){
     super(props, state);  
@@ -20,6 +22,8 @@ export default class Register extends Component {
       focused: false,
       openDictionary: false,
       openAddTag: false,
+      errorflag: false,
+      errorText: 'over 130 characters',
     };
   }
 
@@ -36,6 +40,7 @@ export default class Register extends Component {
     this.setState({key: e.target.value});
   }
   onChangeValue(e) {
+    let errorflag = false;
     const value = e.target.value;
     //タグ抽出
     let tagStr = '', tagList = [];
@@ -53,7 +58,12 @@ export default class Register extends Component {
         }
       });
     }
-    this.setState({value: value, tagList: tagList});
+    const keyValue = this.state.key + Constant.SEPARATOR + value;
+    //100文字制限
+    if(keyValue.length > 130) {
+      errorflag = true;
+    }
+    this.setState({value: value, tagList: tagList, errorflag});
   }
   onClickRegister(e){
     this.setState({key: '', value: '', focused: false});
@@ -118,6 +128,7 @@ export default class Register extends Component {
           multiLine={true}
           rows={1}
           rowsMax={2}
+          errorText={this.state.errorflag? this.state.errorText: null}
           autoFocus={this.state.focused}
           />
         </div>
@@ -142,8 +153,9 @@ export default class Register extends Component {
                 value={this.state.value}
                 onChange={this.onChangeValue.bind(this)}
                 multiLine={true}
-                rows={2}
+                rows={1}
                 rowsMax={3}
+                errorText={this.state.errorflag? this.state.errorText: null}
                 />
             </div>
           </div>
@@ -160,7 +172,7 @@ export default class Register extends Component {
               onAddTag={(tag)=>this.onChangeValue({target:{value: this.state.value+' '+tag}})}/>
             </div>
             <div style={{margin: 20}}>
-              <RaisedButton label="登録" primary={true} onClick={this.onClickRegister.bind(this)} />
+              <RaisedButton label="登録" disabled={this.state.errorflag} primary={true} onClick={this.onClickRegister.bind(this)} />
             </div>
           </div>
         </div>
